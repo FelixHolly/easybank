@@ -4,11 +4,18 @@
   "license": "MIT",
   "scripts": {
     "start": "nx serve easybank",
+    "start:frontend": "nx serve easybank",
     "start:easybank": "nx serve easybank",
+    "start:backend": "cd apps/easybank-backend && ./mvnw spring-boot:run",
     "build": "nx build easybank",
+    "build:frontend": "nx build easybank",
     "build:easybank": "nx build easybank",
+    "build:backend": "cd apps/easybank-backend && ./mvnw clean install",
     "test": "nx test easybank",
+    "test:frontend": "nx test easybank",
     "test:easybank": "nx test easybank",
+    "test:backend": "cd apps/easybank-backend && ./mvnw test",
+    "clean:backend": "cd apps/easybank-backend && ./mvnw clean",
     "lint": "nx lint easybank",
     "lint:easybank": "nx lint easybank"
   },
