@@ -12,27 +12,26 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
-@Profile("!prod")
+@Profile("prod")
 @Configuration
-public class SecurityConfig {
+public class ProdSecurityConfig {
 
   @Bean
   public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-
     http
       .csrf(AbstractHttpConfigurer::disable)
+      .redirectToHttps(withDefaults()) //only https
       .authorizeHttpRequests(
         (requests) -> requests
           .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance").authenticated()
           .requestMatchers("/register", "/contact", "/notices", "/error").permitAll()
       )
-      //global error config
       .exceptionHandling(
         (exceptions) -> exceptions
           .authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint())
       )
-      .formLogin(withDefaults())
-      .httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
+      .formLogin(AbstractHttpConfigurer::disable)
+      .httpBasic(AbstractHttpConfigurer::disable);
 
     return http.build();
   }
