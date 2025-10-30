@@ -1,5 +1,6 @@
 package at.holly.easybankbackend.config;
 
+import at.holly.easybankbackend.exceptionhandling.CustomAccessDeniedHandler;
 import at.holly.easybankbackend.exceptionhandling.CustomBasicAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +31,7 @@ public class SecurityConfig {
       .exceptionHandling(
         (exceptions) -> exceptions
           .authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint())
+          .accessDeniedHandler(new CustomAccessDeniedHandler())
       )
       .formLogin(withDefaults())
       .httpBasic(hbc -> hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
