@@ -50,9 +50,10 @@ mvn spring-boot:run
 
 ### 3. Database Initialization
 
-On startup, the application will:
-- Automatically create database tables (using JPA entities)
-- Execute `src/main/resources/data.sql` to populate initial customer data
+On startup with the dev profile, the application will:
+- Automatically create/update database tables (using JPA entities)
+- To populate initial customer data, set `SQL_INIT_MODE=always` as environment variable on first run
+- After first run, set it to `never` to avoid duplicate data errors
 
 ## Default Login Credentials
 
@@ -68,6 +69,8 @@ Environment variables can be set to override defaults in `application.properties
 - `DATABASE_NAME` (default: easybank)
 - `DATABASE_USERNAME` (default: root)
 - `DATABASE_PASSWORD` (default: root)
+- `SQL_INIT_MODE` (default: never)
+- `ACTIVE_PROFILE` (default: dev)
 
 ## API Endpoints
 
