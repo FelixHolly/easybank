@@ -27,7 +27,7 @@ public class Customer {
   private String mobileNumber;
 
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-  private String pwd;
+  private String password;
 
   private String role;
 
