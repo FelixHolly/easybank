@@ -5,7 +5,7 @@ import { ApiService } from '../../../core/services/api.service';
 import { StorageService } from '../../../core/services/storage.service';
 import { API_CONFIG } from '../../../config/api.config';
 import { APP_CONSTANTS } from '../../../config/app.constants';
-import { User, LoginCredentials, AuthTokens } from '../../../core/models/user.model';
+import {User, LoginCredentials, AuthTokens, RegisterData} from '../../../core/models/user.model';
 
 /**
  * Auth Service
@@ -41,6 +41,10 @@ export class AuthService {
           // TODO: Fetch and store user profile
         })
       );
+  }
+
+  register(credentials: RegisterData): Observable<User> {
+    return this.api.post<User>(API_CONFIG.endpoints.auth.register, credentials);
   }
 
   /**

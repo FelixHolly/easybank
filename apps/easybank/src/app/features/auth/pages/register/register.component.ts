@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { matchPasswordValidator } from '../../../../shared/utils/form.utils';
 import { APP_CONSTANTS } from '../../../../config/app.constants';
+import {RegisterData} from "../../../../core";
 
 /**
  * Register Component
@@ -63,30 +64,26 @@ export class RegisterComponent {
 
     const { confirmPassword, agreeToTerms, ...registerData } = this.registerForm.value;
 
-    // TODO: Implement register API call
-    // For now, just simulate registration
-    setTimeout(() => {
-      this.isLoading.set(false);
-      this.router.navigate(['/auth/login'], {
-        queryParams: { registered: true },
-      });
-    }, 1500);
+    const registerRequest: RegisterData = {
+      name: registerData.name,
+      email: registerData.email,
+      password: registerData.password,
+    };
 
-    // Uncomment when API is ready:
-    // this.authService.register(registerData).subscribe({
-    //   next: () => {
-    //     this.isLoading.set(false);
-    //     this.router.navigate(['/auth/login'], {
-    //       queryParams: { registered: true }
-    //     });
-    //   },
-    //   error: (error) => {
-    //     this.isLoading.set(false);
-    //     this.errorMessage.set(
-    //       error.error?.message || 'Registration failed. Please try again.'
-    //     );
-    //   }
-    // });
+    this.authService.register(registerRequest).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+        this.router.navigate(['/auth/login'], {
+          queryParams: { registered: true }
+        });
+      },
+      error: (error) => {
+        this.isLoading.set(false);
+        this.errorMessage.set(
+          error.error?.message || 'Registration failed. Please try again.'
+        );
+      }
+    });
   }
 
   /**

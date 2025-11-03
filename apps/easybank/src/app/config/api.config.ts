@@ -11,10 +11,10 @@ export const API_CONFIG = {
   endpoints: {
     // Auth endpoints
     auth: {
-      login: '/api/auth/login',
-      logout: '/api/auth/logout',
-      register: '/api/auth/register',
-      refresh: '/api/auth/refresh',
+      login: '/login',
+      logout: '/logout',
+      register: '/register',
+      refresh: '/refresh',
     },
 
     // Customer endpoints
