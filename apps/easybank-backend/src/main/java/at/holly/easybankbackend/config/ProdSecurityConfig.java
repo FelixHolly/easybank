@@ -23,7 +23,7 @@ public class ProdSecurityConfig {
       .redirectToHttps(withDefaults()) //only https
       .authorizeHttpRequests(
         (requests) -> requests
-          .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance").authenticated()
+          .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance", "/user").authenticated()
           .requestMatchers("/register", "/contact", "/notices", "/error").permitAll()
       )
       .exceptionHandling(

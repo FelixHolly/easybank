@@ -4,10 +4,14 @@ import at.holly.easybankbackend.model.Customer;
 import at.holly.easybankbackend.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.sql.Date;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,6 +26,7 @@ public class CustomerController {
     try {
       String hashPassword = passwordEncoder.encode(customer.getPassword());
       customer.setPassword(hashPassword);
+      customer.setCreateDt(new Date(System.currentTimeMillis()));
       Customer savedCustomer = customerRepository.save(customer);
 
       if (savedCustomer.getId() > 0){
@@ -32,5 +37,10 @@ public class CustomerController {
     } catch (Exception e) {
       return ResponseEntity.badRequest().body("User registration failed");
     }
+  }
+
+  @RequestMapping("/user")
+  public Customer getUserDetails(Authentication authentication) {
+    return customerRepository.findByEmail(authentication.getName()).orElseThrow(() -> new RuntimeException("User not found"));
   }
 }
