@@ -1,0 +1,58 @@
+<div class="dashboard-container">
+  <header class="dashboard-header">
+    <h1>Welcome back!</h1>
+    <p>Here's your account overview</p>
+  </header>
+
+  <div class="dashboard-grid">
+    <!-- Account Summary Cards -->
+    <section class="summary-cards">
+      <div class="card">
+        <h3>Balance</h3>
+        <p class="amount">{{ accountSummary.balance | currency }}</p>
+        <a routerLink="/balance">View Details</a>
+      </div>
+
+      <div class="card">
+        <h3>Loans</h3>
+        <p class="amount">{{ accountSummary.totalLoans }}</p>
+        <a routerLink="/loans">Manage Loans</a>
+      </div>
+
+      <div class="card">
+        <h3>Cards</h3>
+        <p class="amount">{{ accountSummary.activeCards }}</p>
+        <a routerLink="/cards">View Cards</a>
+      </div>
+    </section>
+
+    <!-- Recent Transactions -->
+    <section class="recent-transactions">
+      <h2>Recent Transactions</h2>
+      <div class="transactions-list">
+        @if (recentTransactions.length === 0) {
+          <p>No recent transactions</p>
+        } @else {
+          @for (transaction of recentTransactions; track transaction.id) {
+            <div class="transaction-item">
+              <!-- Transaction details -->
+            </div>
+          }
+        }
+      </div>
+    </section>
+
+    <!-- Quick Actions -->
+    <section class="quick-actions">
+      <h2>Quick Actions</h2>
+      <div class="actions-grid">
+        <a routerLink="/account" class="action-btn">
+          <span>My Account</span>
+        </a>
+        <a routerLink="/contact" class="action-btn">
+          <span>Contact Support</span>
+        </a>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,104 @@
+<!-- Navigation Header -->
+<nav class="navbar">
+  <div class="nav-container">
+    <a routerLink="/home" class="logo">
+      <span class="logo-text">EasyBank</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
+      <li><a routerLink="/contact" routerLinkActive="active">Contact Us</a></li>
+      <li><a routerLink="/notices" routerLinkActive="active">Notices</a></li>
+      <li><a routerLink="/auth/login" class="btn-login">Login</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Main Content -->
+<div class="home-container">
+  <header class="hero">
+    <h1>Welcome to EasyBank</h1>
+    <p>Your trusted banking partner</p>
+    <div class="cta-buttons">
+      <a routerLink="/auth/login" class="btn btn-primary">Login</a>
+      <a routerLink="/auth/register" class="btn btn-secondary">Sign Up</a>
+    </div>
+  </header>
+
+  <section class="features">
+    <h2>Our Services</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">💳</div>
+        <h3>Cards</h3>
+        <p>Manage your credit and debit cards with ease</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Balance</h3>
+        <p>Track your account balance in real-time</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏦</div>
+        <h3>Loans</h3>
+        <p>Apply for personal and business loans</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Reports</h3>
+        <p>Detailed financial reports and analytics</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="about">
+    <h2>Why Choose EasyBank?</h2>
+    <div class="about-content">
+      <div class="about-item">
+        <h3>🔒 Secure</h3>
+        <p>Bank-level security with 256-bit encryption</p>
+      </div>
+      <div class="about-item">
+        <h3>⚡ Fast</h3>
+        <p>Lightning-fast transactions and instant updates</p>
+      </div>
+      <div class="about-item">
+        <h3>🌍 Global</h3>
+        <p>Access your account anywhere in the world</p>
+      </div>
+      <div class="about-item">
+        <h3>📱 Mobile</h3>
+        <p>Full mobile app support for iOS and Android</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h4>EasyBank</h4>
+      <p>Your trusted banking partner since 2024</p>
+    </div>
+    <div class="footer-section">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a routerLink="/home">Home</a></li>
+        <li><a routerLink="/contact">Contact Us</a></li>
+        <li><a routerLink="/notices">Notices</a></li>
+      </ul>
+    </div>
+    <div class="footer-section">
+      <h4>Legal</h4>
+      <ul>
+        <li><a href="#">Terms & Conditions</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="#">Cookie Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2024 EasyBank. All rights reserved.</p>
+  </div>
+</footer>

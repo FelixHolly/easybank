@@ -1,0 +1,14 @@
+# Shared Components
+
+Place reusable UI components here.
+
+## Examples:
+- button/
+- card/
+- modal/
+- form-field/
+- loading-spinner/
+- table/
+- alert/
+- breadcrumb/
+- pagination/
