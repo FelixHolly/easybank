@@ -20,9 +20,15 @@ public class CustomerController {
   private final CustomerRepository customerRepository;
   private final PasswordEncoder passwordEncoder;
 
+
+//  @GetMapping("/csrf")
+//  public Map<String, String> csrf(org.springframework.security.web.csrf.CsrfToken token) {
+//    return Map.of("token", token.getToken());
+//  }
+
   //todo use DTO instead of Customer
   @PostMapping("/register")
-  ResponseEntity<String> registerUser(@RequestBody Customer customer) {
+  public ResponseEntity<String> registerUser(@RequestBody Customer customer) {
     try {
       String hashPassword = passwordEncoder.encode(customer.getPassword());
       customer.setPassword(hashPassword);

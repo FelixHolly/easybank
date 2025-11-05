@@ -1,11 +1,11 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
-import { ApiService } from '../../../core/services/api.service';
-import { StorageService } from '../../../core/services/storage.service';
-import { API_CONFIG } from '../../../config/api.config';
-import { APP_CONSTANTS } from '../../../config/app.constants';
-import {User, LoginCredentials, AuthTokens, RegisterData} from '../../../core/models/user.model';
+import { ApiService } from '../../../core';
+import { StorageService } from '../../../core';
+import { API_CONFIG } from '../../../config';
+import { APP_CONSTANTS } from '../../../config';
+import {User, LoginCredentials, AuthTokens, RegisterData} from '../../../core';
 
 /**
  * Auth Service
@@ -43,6 +43,7 @@ export class AuthService {
       );
   }
 
+  //todo return value of register
   register(credentials: RegisterData): Observable<User> {
     return this.api.post<User>(API_CONFIG.endpoints.auth.register, credentials);
   }
