@@ -43,6 +43,17 @@ public class Customer {
   @Enumerated(EnumType.STRING)
   private Set<Role> roles = new HashSet<>();
 
+  /**
+   * Customer authorities (fine-grained permissions) stored in a separate table (customer_authorities).
+   * Authorities provide specific operation-level permissions (e.g., ACCOUNT:READ, TRANSACTION:WRITE).
+   * Roles provide high-level access, authorities provide specific permissions.
+   */
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "customer_authorities", joinColumns = @JoinColumn(name = "customer_id"))
+  @Column(name = "authority")
+  @Enumerated(EnumType.STRING)
+  private Set<Authority> authorities = new HashSet<>();
+
   @Column(name = "create_dt")
   @JsonIgnore
   private Date createDt;

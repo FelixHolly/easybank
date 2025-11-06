@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,12 +26,21 @@ public class EasyBankUserDetailService implements UserDetailsService {
     Customer customer = customerRepository.findByEmail(username)
         .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-    // Convert Set<Role> to List<GrantedAuthority>
-    // Each role is prefixed with "ROLE_" as per Spring Security convention
-    List<GrantedAuthority> authorities = customer.getRoles().stream()
+    // Combine both roles and authorities into a single list
+    List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+
+    // Add roles (prefixed with "ROLE_")
+    List<GrantedAuthority> roleAuthorities = customer.getRoles().stream()
         .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
         .collect(Collectors.toList());
+    grantedAuthorities.addAll(roleAuthorities);
 
-    return new User(customer.getEmail(), customer.getPassword(), authorities);
+    // Add specific authorities (no prefix)
+    List<GrantedAuthority> specificAuthorities = customer.getAuthorities().stream()
+        .map(authority -> new SimpleGrantedAuthority(authority.getAuthority()))
+        .collect(Collectors.toList());
+    grantedAuthorities.addAll(specificAuthorities);
+
+    return new User(customer.getEmail(), customer.getPassword(), grantedAuthorities);
   }
 }

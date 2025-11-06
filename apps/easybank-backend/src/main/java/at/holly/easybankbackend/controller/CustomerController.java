@@ -3,6 +3,7 @@ package at.holly.easybankbackend.controller;
 import at.holly.easybankbackend.model.Customer;
 import at.holly.easybankbackend.model.Role;
 import at.holly.easybankbackend.repository.CustomerRepository;
+import at.holly.easybankbackend.service.AuthorityService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class CustomerController {
 
   private final CustomerRepository customerRepository;
   private final PasswordEncoder passwordEncoder;
+  private final AuthorityService authorityService;
 
 
 //  @GetMapping("/csrf")
@@ -38,7 +40,12 @@ public class CustomerController {
       String hashPassword = passwordEncoder.encode(customer.getPassword());
       customer.setPassword(hashPassword);
       customer.setCreateDt(new Date(System.currentTimeMillis()));
+
+      // Set default role if none provided
       customer.setRoles(Set.of(Role.USER));
+
+      // Automatically assign authorities based on roles
+      customer.setAuthorities(authorityService.getDefaultAuthoritiesForRoles(customer.getRoles()));
 
       Customer savedCustomer = customerRepository.save(customer);
 
