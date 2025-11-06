@@ -1,36 +1,25 @@
 /**
  * User Model
- * Core user data structure used across the application
+ * Core user data structure matching backend Customer model
  */
 
 export interface User {
   id: number;
   name: string;
   email: string;
-  role: UserRole;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
-
-export enum UserRole {
-  USER = 'USER',
-  ADMIN = 'ADMIN',
-}
-
-export interface AuthTokens {
-  accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
+  mobileNumber: string;
+  role: string;
 }
 
 export interface LoginCredentials {
   email: string;
   password: string;
-  rememberMe?: boolean;
 }
 
 export interface RegisterData {
   name: string;
   email: string;
+  mobileNumber: string;
   password: string;
+  role: string;
 }

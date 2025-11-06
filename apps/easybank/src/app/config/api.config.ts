@@ -11,16 +11,9 @@ export const API_CONFIG = {
   endpoints: {
     // Auth endpoints
     auth: {
-      login: '/login',
+      user: '/user',
       logout: '/logout',
       register: '/register',
-      refresh: '/refresh',
-    },
-
-    // Customer endpoints
-    customer: {
-      profile: '/api/customer/profile',
-      update: '/api/customer/update',
     },
 
     // Account endpoints

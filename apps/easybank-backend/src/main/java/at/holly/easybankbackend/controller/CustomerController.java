@@ -2,10 +2,13 @@ package at.holly.easybankbackend.controller;
 
 import at.holly.easybankbackend.model.Customer;
 import at.holly.easybankbackend.repository.CustomerRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,5 +51,13 @@ public class CustomerController {
   @RequestMapping("/user")
   public Customer getUserDetails(Authentication authentication) {
     return customerRepository.findByEmail(authentication.getName()).orElseThrow(() -> new RuntimeException("User not found"));
+  }
+
+  @PostMapping("/logout")
+  public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    if (authentication != null) {
+      new SecurityContextLogoutHandler().logout(request, response, authentication);
+    }
+    return ResponseEntity.ok("Logged out successfully");
   }
 }

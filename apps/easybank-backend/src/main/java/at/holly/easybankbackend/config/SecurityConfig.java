@@ -32,7 +32,7 @@ public class SecurityConfig {
       .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
       .authorizeHttpRequests(
         (requests) -> requests
-          .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance", "/user").authenticated()
+          .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance", "/user", "/logout").authenticated()
           .requestMatchers("/register", "/contact", "/notices", "/error").permitAll()
       )
       //global error config

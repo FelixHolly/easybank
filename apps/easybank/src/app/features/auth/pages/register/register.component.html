@@ -52,6 +52,26 @@
         }
       </div>
 
+      <!-- Mobile Number Field -->
+      <div class="form-group">
+        <label for="mobileNumber">Mobile Number</label>
+        <input
+          id="mobileNumber"
+          type="tel"
+          formControlName="mobileNumber"
+          class="form-control"
+          [class.error]="hasError('mobileNumber', 'required') || hasError('mobileNumber', 'pattern')"
+          placeholder="Enter your mobile number"
+          autocomplete="tel"
+        />
+        @if (hasError('mobileNumber', 'required')) {
+          <span class="error-message">Mobile number is required</span>
+        }
+        @if (hasError('mobileNumber', 'pattern')) {
+          <span class="error-message">Please enter a valid mobile number</span>
+        }
+      </div>
+
       <!-- Password Field -->
       <div class="form-group">
         <label for="password">Password</label>

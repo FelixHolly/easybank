@@ -34,6 +34,7 @@ export class RegisterComponent {
       {
         name: ['', [Validators.required, Validators.minLength(2)]],
         email: ['', [Validators.required, Validators.email]],
+        mobileNumber: ['', [Validators.required, Validators.pattern(/^\+?[1-9]\d{1,14}$/)]],
         password: [
           '',
           [
@@ -67,7 +68,9 @@ export class RegisterComponent {
     const registerRequest: RegisterData = {
       name: registerData.name,
       email: registerData.email,
+      mobileNumber: registerData.mobileNumber,
       password: registerData.password,
+      role: 'USER', // Default role
     };
 
     this.authService.register(registerRequest).subscribe({

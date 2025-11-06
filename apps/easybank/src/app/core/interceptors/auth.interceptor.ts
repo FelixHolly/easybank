@@ -1,11 +1,8 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { StorageService } from '../services/storage.service';
-import { APP_CONSTANTS } from '../../config/app.constants';
 
 /**
  * Auth Interceptor
- * Automatically adds authentication token to outgoing HTTP requests
+ * Handles Basic Auth and CSRF token for session-based authentication
  *
  * Register in app.config.ts:
  * provideHttpClient(
@@ -13,19 +10,29 @@ import { APP_CONSTANTS } from '../../config/app.constants';
  * )
  */
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  // const storage = inject(StorageService);
-  //
-  // // Get auth token from storage
-  // const token = storage.getItem<string>(APP_CONSTANTS.storageKeys.authToken);
-  //
-  // // Clone request and add Authorization header if token exists
-  // if (token) {
-  //   req = req.clone({
-  //     setHeaders: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   });
-  // }
+  // Extract CSRF token from cookie
+  const csrfToken = getCookie('XSRF-TOKEN');
+
+  // For non-GET requests, add CSRF token header
+  if (csrfToken && req.method !== 'GET') {
+    req = req.clone({
+      setHeaders: {
+        'X-XSRF-TOKEN': csrfToken,
+      },
+    });
+  }
 
   return next(req);
 };
+
+/**
+ * Get cookie value by name
+ */
+function getCookie(name: string): string | null {
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) {
+    return parts.pop()?.split(';').shift() || null;
+  }
+  return null;
+}

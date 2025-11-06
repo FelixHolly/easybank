@@ -20,34 +20,46 @@ export class ApiService {
    * GET request
    */
   get<T>(endpoint: string, params?: HttpParams): Observable<T> {
-    return this.http.get<T>(`${this.baseUrl}${endpoint}`, { params });
+    return this.http.get<T>(`${this.baseUrl}${endpoint}`, {
+      params,
+      withCredentials: true
+    });
   }
 
   /**
    * POST request
    */
   post<T>(endpoint: string, body: any, options?: { headers?: HttpHeaders }): Observable<T> {
-    return this.http.post<T>(`${this.baseUrl}${endpoint}`, body, options);
+    return this.http.post<T>(`${this.baseUrl}${endpoint}`, body, {
+      ...options,
+      withCredentials: true
+    });
   }
 
   /**
    * PUT request
    */
   put<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.put<T>(`${this.baseUrl}${endpoint}`, body);
+    return this.http.put<T>(`${this.baseUrl}${endpoint}`, body, {
+      withCredentials: true
+    });
   }
 
   /**
    * PATCH request
    */
   patch<T>(endpoint: string, body: any): Observable<T> {
-    return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body);
+    return this.http.patch<T>(`${this.baseUrl}${endpoint}`, body, {
+      withCredentials: true
+    });
   }
 
   /**
    * DELETE request
    */
   delete<T>(endpoint: string): Observable<T> {
-    return this.http.delete<T>(`${this.baseUrl}${endpoint}`);
+    return this.http.delete<T>(`${this.baseUrl}${endpoint}`, {
+      withCredentials: true
+    });
   }
 }

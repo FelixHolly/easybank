@@ -15,21 +15,20 @@ import { APP_CONSTANTS } from '../../config/app.constants';
  * }
  */
 export const authGuard: CanActivateFn = (route, state) => {
-  // const router = inject(Router);
-  // const storage = inject(StorageService);
-  //
-  // // Check if user has auth token
-  // const token = storage.getItem(APP_CONSTANTS.storageKeys.authToken);
-  //
-  // if (token) {
-  //   return true;
-  // }
-  //
-  // // Redirect to login with return URL
-  // router.navigate(['/auth/login'], {
-  //   queryParams: { returnUrl: state.url },
-  // });
-  //
-  // return false;
-  return true;
+  const router = inject(Router);
+  const storage = inject(StorageService);
+
+  // Check if user is authenticated by checking for user data in storage
+  const user = storage.getItem(APP_CONSTANTS.storageKeys.user);
+
+  if (user) {
+    return true;
+  }
+
+  // Redirect to login with return URL
+  router.navigate(['/auth/login'], {
+    queryParams: { returnUrl: state.url },
+  });
+
+  return false;
 };

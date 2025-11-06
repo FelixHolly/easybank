@@ -1,15 +1,16 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
 import { ApiService } from '../../../core';
 import { StorageService } from '../../../core';
 import { API_CONFIG } from '../../../config';
 import { APP_CONSTANTS } from '../../../config';
-import {User, LoginCredentials, AuthTokens, RegisterData} from '../../../core';
+import { User, LoginCredentials, RegisterData } from '../../../core';
 
 /**
  * Auth Service
- * Handles authentication state and operations
+ * Handles session-based authentication with HTTP Basic Auth
  */
 @Injectable({
   providedIn: 'root',
@@ -23,6 +24,7 @@ export class AuthService {
 
   constructor(
     private api: ApiService,
+    private http: HttpClient,
     private storage: StorageService,
     private router: Router
   ) {
@@ -30,60 +32,66 @@ export class AuthService {
   }
 
   /**
-   * Login with credentials
+   * Login with credentials using HTTP Basic Auth
    */
-  login(credentials: LoginCredentials): Observable<AuthTokens> {
-    return this.api
-      .post<AuthTokens>(API_CONFIG.endpoints.auth.login, credentials)
-      .pipe(
-        tap((tokens) => {
-          this.storeTokens(tokens);
-          // TODO: Fetch and store user profile
-        })
-      );
+  login(credentials: LoginCredentials): Observable<User> {
+    // Create Basic Auth header
+    const basicAuth = btoa(`${credentials.email}:${credentials.password}`);
+    const headers = new HttpHeaders({
+      'Authorization': `Basic ${basicAuth}`
+    });
+
+    // Call /user endpoint with Basic Auth to authenticate and get user details
+    return this.http.get<User>(
+      `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.auth.user}`,
+      {
+        headers,
+        withCredentials: true
+      }
+    ).pipe(
+      tap((user) => {
+        this.setCurrentUser(user);
+      })
+    );
   }
 
-  //todo return value of register
-  register(credentials: RegisterData): Observable<User> {
-    return this.api.post<User>(API_CONFIG.endpoints.auth.register, credentials);
+  /**
+   * Register new user
+   */
+  register(credentials: RegisterData): Observable<string> {
+    return this.api.post<string>(API_CONFIG.endpoints.auth.register, credentials);
   }
 
   /**
    * Logout current user
    */
-  logout(): void {
-    // Clear tokens and user data
-    this.storage.removeItem(APP_CONSTANTS.storageKeys.authToken);
-    this.storage.removeItem(APP_CONSTANTS.storageKeys.refreshToken);
-    this.storage.removeItem(APP_CONSTANTS.storageKeys.user);
+  logout(): Observable<string> {
+    return this.api.post<string>(API_CONFIG.endpoints.auth.logout, {}).pipe(
+      tap(() => {
+        // Clear user data
+        this.storage.removeItem(APP_CONSTANTS.storageKeys.user);
 
-    // Reset user signal
-    this.currentUserSignal.set(null);
+        // Reset user signal
+        this.currentUserSignal.set(null);
 
-    // Navigate to login
-    this.router.navigate(['/auth/login']);
+        // Navigate to login
+        this.router.navigate(['/auth/login']);
+      })
+    );
   }
 
   /**
    * Check if user is authenticated
    */
   isAuthenticated(): boolean {
-    return this.storage.hasItem(APP_CONSTANTS.storageKeys.authToken);
+    return this.storage.hasItem(APP_CONSTANTS.storageKeys.user);
   }
 
   /**
-   * Get current auth token
+   * Get current user from storage
    */
-  getToken(): string | null {
-    return this.storage.getItem(APP_CONSTANTS.storageKeys.authToken);
-  }
-
-  /**
-   * Store authentication tokens
-   */
-  private storeTokens(tokens: AuthTokens): void {
-    this.storage.setItem(APP_CONSTANTS.storageKeys.authToken, tokens.accessToken);
-    this.storage.setItem(APP_CONSTANTS.storageKeys.refreshToken, tokens.refreshToken);
+  getCurrentUser(): User | null {
+    return this.storage.getItem<User>(APP_CONSTANTS.storageKeys.user);
   }
 
   /**
