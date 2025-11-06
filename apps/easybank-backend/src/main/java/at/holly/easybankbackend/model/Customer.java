@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "customers")
@@ -29,7 +31,17 @@ public class Customer {
   @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
   private String password;
 
-  private String role;
+  /**
+   * Customer roles stored in a separate table (customer_roles).
+   * Using @ElementCollection creates a one-to-many relationship.
+   * Using Set prevents duplicate roles.
+   * Using @Enumerated(STRING) stores the enum name as string for readability.
+   */
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "customer_roles", joinColumns = @JoinColumn(name = "customer_id"))
+  @Column(name = "role")
+  @Enumerated(EnumType.STRING)
+  private Set<Role> roles = new HashSet<>();
 
   @Column(name = "create_dt")
   @JsonIgnore

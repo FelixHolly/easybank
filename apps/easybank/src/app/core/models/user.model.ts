@@ -3,12 +3,14 @@
  * Core user data structure matching backend Customer model
  */
 
+export type Role = 'USER' | 'ADMIN' | 'MANAGER' | 'SUPPORT';
+
 export interface User {
   id: number;
   name: string;
   email: string;
   mobileNumber: string;
-  role: string;
+  roles: Role[];
 }
 
 export interface LoginCredentials {
@@ -21,5 +23,4 @@ export interface RegisterData {
   email: string;
   mobileNumber: string;
   password: string;
-  role: string;
 }

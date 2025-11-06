@@ -1,6 +1,7 @@
 package at.holly.easybankbackend.controller;
 
 import at.holly.easybankbackend.model.Customer;
+import at.holly.easybankbackend.model.Role;
 import at.holly.easybankbackend.repository.CustomerRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Date;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,6 +38,8 @@ public class CustomerController {
       String hashPassword = passwordEncoder.encode(customer.getPassword());
       customer.setPassword(hashPassword);
       customer.setCreateDt(new Date(System.currentTimeMillis()));
+      customer.setRoles(Set.of(Role.USER));
+
       Customer savedCustomer = customerRepository.save(customer);
 
       if (savedCustomer.getId() > 0){

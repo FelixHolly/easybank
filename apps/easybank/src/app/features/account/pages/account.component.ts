@@ -1,7 +1,7 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpParams } from '@angular/common/http';
-import { ApiService } from '../../../core';
+import { ApiService, User } from '../../../core';
 import { AuthService } from '../../auth/services/auth.service';
 import { API_CONFIG } from '../../../config';
 import { Account } from '../../../shared/models/financial.model';
@@ -19,7 +19,7 @@ import { Account } from '../../../shared/models/financial.model';
 })
 export class AccountComponent implements OnInit {
   account = signal<Account | null>(null);
-  currentUser = signal<any>(null);
+  currentUser = signal<User | null>(null);
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
 

@@ -2,13 +2,26 @@
 -- CUSTOMERS  (AUTO ID)
 -- -------------------------
 INSERT INTO customers (
-  name, email, mobile_number, password, role, create_dt
+  name, email, mobile_number, password, create_dt
 ) VALUES
-    ('Alice Adams',   'alice.adams@example.com',   '702-555-0100', '{noop}password1', 'ROLE_USER',  '2025-10-01'),
-    ('Bob Brown',     'bob.brown@example.com',     '702-555-0101', '{noop}password2', 'ROLE_USER',  '2025-10-02'),
-    ('Charlie Carter','charlie.carter@example.com','702-555-0102', '{noop}password3', 'ROLE_USER',  '2025-10-03'),
-    ('Diana Dawson',  'diana.dawson@example.com',  '702-555-0103', '{noop}password4', 'ROLE_USER',  '2025-10-04'),
-    ('Admin User',    'admin@example.com',         '702-555-0104', '{noop}adminpass', 'ROLE_ADMIN', '2025-10-05');
+    ('Alice Adams',   'alice.adams@example.com',   '702-555-0100', '{noop}password1', '2025-10-01'),
+    ('Bob Brown',     'bob.brown@example.com',     '702-555-0101', '{noop}password2', '2025-10-02'),
+    ('Charlie Carter','charlie.carter@example.com','702-555-0102', '{noop}password3', '2025-10-03'),
+    ('Diana Dawson',  'diana.dawson@example.com',  '702-555-0103', '{noop}password4', '2025-10-04'),
+    ('Admin User',    'admin@example.com',         '702-555-0104', '{noop}adminpass', '2025-10-05');
+
+-- -------------------------
+-- CUSTOMER ROLES (many-to-many)
+-- -------------------------
+INSERT INTO customer_roles (customer_id, role) VALUES
+    (1, 'USER'),            -- Alice: USER
+    (2, 'USER'),            -- Bob: USER
+    (3, 'USER'),            -- Charlie: USER
+    (4, 'USER'),            -- Diana: USER
+    (4, 'MANAGER'),         -- Diana: also MANAGER (showing multiple roles)
+    (5, 'USER'),            -- Admin: USER
+    (5, 'ADMIN'),           -- Admin: ADMIN
+    (5, 'MANAGER');         -- Admin: also MANAGER (full privileges)
 
 -- -------------------------
 -- ACCOUNTS

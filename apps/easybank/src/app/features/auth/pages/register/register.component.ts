@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
-import { matchPasswordValidator } from '../../../../shared/utils/form.utils';
-import { APP_CONSTANTS } from '../../../../config/app.constants';
+import { matchPasswordValidator } from '../../../../shared';
+import { APP_CONSTANTS } from '../../../../config';
 import {RegisterData} from "../../../../core";
 
 /**
@@ -66,7 +66,6 @@ export class RegisterComponent {
       email: registerData.email,
       mobileNumber: registerData.mobileNumber,
       password: registerData.password,
-      role: 'USER', // Default role
     };
 
     this.authService.register(registerRequest).subscribe({

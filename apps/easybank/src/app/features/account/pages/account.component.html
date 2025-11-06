@@ -50,8 +50,8 @@
               <div class="value">{{ currentUser()!.mobileNumber }}</div>
             </div>
             <div class="detail-group">
-              <span>Role</span>
-              <div class="value role">{{ currentUser()!.role }}</div>
+              <span>Roles</span>
+              <div class="value role">{{ currentUser()!.roles.join(', ') }}</div>
             </div>
           </div>
         </div>
