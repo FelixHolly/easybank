@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -15,17 +15,15 @@ import { RouterLink } from '@angular/router';
   styleUrl: './forgot-password.component.scss',
 })
 export class ForgotPasswordComponent {
-  forgotPasswordForm: FormGroup;
+  private fb = inject(FormBuilder);
+
+  forgotPasswordForm: FormGroup = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+  });
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
   successMessage = signal<string | null>(null);
   emailSent = signal(false);
-
-  constructor(private fb: FormBuilder) {
-    this.forgotPasswordForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-    });
-  }
 
   /**
    * Handle form submission

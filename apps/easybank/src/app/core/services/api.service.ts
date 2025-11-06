@@ -1,5 +1,5 @@
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_CONFIG } from '../../config/api.config';
 
@@ -13,8 +13,7 @@ import { API_CONFIG } from '../../config/api.config';
 })
 export class ApiService {
   private readonly baseUrl = API_CONFIG.baseUrl;
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   /**
    * GET request

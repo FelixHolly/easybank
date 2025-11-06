@@ -29,6 +29,7 @@ public class SecurityConfig {
       .csrf(csrf -> csrf
         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
         .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
+        .ignoringRequestMatchers("/contact", "/register")
       )
       .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
       .securityContext(securityContext -> securityContext.requireExplicitSave(false))

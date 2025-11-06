@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -19,37 +19,33 @@ import {RegisterData} from "../../../../core";
   styleUrl: './register.component.scss',
 })
 export class RegisterComponent {
-  registerForm: FormGroup;
+  private fb = inject(FormBuilder);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
+  registerForm: FormGroup = this.fb.group(
+    {
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      email: ['', [Validators.required, Validators.email]],
+      mobileNumber: ['', [Validators.required, Validators.pattern(/^\+?[1-9]\d{1,14}$/)]],
+      password: [
+        '',
+        [
+          Validators.required,
+          Validators.minLength(APP_CONSTANTS.validation.passwordMinLength),
+        ],
+      ],
+      confirmPassword: ['', [Validators.required]],
+      agreeToTerms: [false, [Validators.requiredTrue]],
+    },
+    {
+      validators: matchPasswordValidator('password', 'confirmPassword'),
+    }
+  );
   isLoading = signal(false);
   errorMessage = signal<string | null>(null);
   showPassword = signal(false);
   showConfirmPassword = signal(false);
-
-  constructor(
-    private fb: FormBuilder,
-    private authService: AuthService,
-    private router: Router
-  ) {
-    this.registerForm = this.fb.group(
-      {
-        name: ['', [Validators.required, Validators.minLength(2)]],
-        email: ['', [Validators.required, Validators.email]],
-        mobileNumber: ['', [Validators.required, Validators.pattern(/^\+?[1-9]\d{1,14}$/)]],
-        password: [
-          '',
-          [
-            Validators.required,
-            Validators.minLength(APP_CONSTANTS.validation.passwordMinLength),
-          ],
-        ],
-        confirmPassword: ['', [Validators.required]],
-        agreeToTerms: [false, [Validators.requiredTrue]],
-      },
-      {
-        validators: matchPasswordValidator('password', 'confirmPassword'),
-      }
-    );
-  }
 
   /**
    * Handle form submission
