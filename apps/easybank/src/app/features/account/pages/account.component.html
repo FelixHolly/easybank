@@ -1,0 +1,61 @@
+<div class="page-container">
+  <h1>My Account</h1>
+
+  @if (isLoading()) {
+    <p>Loading account details...</p>
+  } @else if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+  } @else if (account()) {
+    <div class="account-container">
+      <div class="account-card">
+        <h2>Account Information</h2>
+        <div class="account-details">
+          <div class="detail-group">
+            <span>Account Number</span>
+            <div class="value">{{ account()!.accountNumber }}</div>
+          </div>
+          <div class="detail-group">
+            <span>Account Type</span>
+            <div class="value account-type">{{ account()!.accountType }}</div>
+          </div>
+          <div class="detail-group">
+            <span>Branch Address</span>
+            <div class="value">{{ account()!.branchAddress }}</div>
+          </div>
+          <div class="detail-group">
+            <span>Customer ID</span>
+            <div class="value">{{ account()!.customerId }}</div>
+          </div>
+          <div class="detail-group">
+            <span>Account Created</span>
+            <div class="value">{{ account()!.createDt | date: 'longDate' }}</div>
+          </div>
+        </div>
+      </div>
+
+      @if (currentUser()) {
+        <div class="profile-card">
+          <h2>Profile Information</h2>
+          <div class="profile-details">
+            <div class="detail-group">
+              <span>Name</span>
+              <div class="value">{{ currentUser()!.name }}</div>
+            </div>
+            <div class="detail-group">
+              <span>Email</span>
+              <div class="value">{{ currentUser()!.email }}</div>
+            </div>
+            <div class="detail-group">
+              <span>Mobile Number</span>
+              <div class="value">{{ currentUser()!.mobileNumber }}</div>
+            </div>
+            <div class="detail-group">
+              <span>Role</span>
+              <div class="value role">{{ currentUser()!.role }}</div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

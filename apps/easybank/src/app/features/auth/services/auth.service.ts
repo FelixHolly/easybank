@@ -1,4 +1,4 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
@@ -16,20 +16,16 @@ import { User, LoginCredentials, RegisterData } from '../../../core';
   providedIn: 'root',
 })
 export class AuthService {
+  private api = inject(ApiService);
+  private http = inject(HttpClient);
+  private storage = inject(StorageService);
+  private router = inject(Router);
+
   // Signal for reactive current user state
-  private currentUserSignal = signal<User | null>(null);
+  private currentUserSignal = signal<User | null>(this.storage.getItem<User>(APP_CONSTANTS.storageKeys.user));
 
   // Public readonly signal
   readonly currentUser = this.currentUserSignal.asReadonly();
-
-  constructor(
-    private api: ApiService,
-    private http: HttpClient,
-    private storage: StorageService,
-    private router: Router
-  ) {
-    this.loadUserFromStorage();
-  }
 
   /**
    * Login with credentials using HTTP Basic Auth
@@ -92,16 +88,6 @@ export class AuthService {
    */
   getCurrentUser(): User | null {
     return this.storage.getItem<User>(APP_CONSTANTS.storageKeys.user);
-  }
-
-  /**
-   * Load user from storage on app init
-   */
-  private loadUserFromStorage(): void {
-    const user = this.storage.getItem<User>(APP_CONSTANTS.storageKeys.user);
-    if (user) {
-      this.currentUserSignal.set(user);
-    }
   }
 
   /**

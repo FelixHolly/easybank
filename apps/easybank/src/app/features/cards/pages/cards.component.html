@@ -1,0 +1,40 @@
+<div class="page-container">
+  <h1>My Cards</h1>
+
+  @if (isLoading()) {
+    <p>Loading cards...</p>
+  } @else if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+  } @else if (cards().length === 0) {
+    <p>You have no cards at this time.</p>
+  } @else {
+    <div class="cards-list">
+      @for (card of cards(); track card.cardId) {
+        <div class="card-item">
+          <div class="card-visual">
+            <div class="card-chip"></div>
+            <div class="card-type">{{ card.cardType }}</div>
+            <div class="card-number">**** **** **** {{ card.cardNumber.slice(-4) }}</div>
+          </div>
+          <div class="card-details">
+            <div class="detail-row">
+              <span class="label">Total Limit:</span>
+              <span class="value">${{ card.totalLimit | number }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Amount Used:</span>
+              <span class="value used">${{ card.amountUsed | number }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Available:</span>
+              <span class="value available">${{ card.availableAmount | number }}</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress" [style.width.%]="(card.amountUsed / card.totalLimit) * 100"></div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

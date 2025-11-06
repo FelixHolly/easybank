@@ -1,0 +1,145 @@
+<div class="page-container">
+  <div class="contact-header">
+    <h1>Contact Us</h1>
+    <p>Have a question or need assistance? We're here to help!</p>
+  </div>
+
+  <div class="contact-content">
+    <div class="contact-info">
+      <h2>Get In Touch</h2>
+      <div class="info-item">
+        <div class="icon">📧</div>
+        <div class="details">
+          <h3>Email</h3>
+          <p>support&#64;easybank.com</p>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="icon">📞</div>
+        <div class="details">
+          <h3>Phone</h3>
+          <p>1-800-EASYBANK</p>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="icon">📍</div>
+        <div class="details">
+          <h3>Address</h3>
+          <p>123 Banking Street<br>Financial District<br>New York, NY 10004</p>
+        </div>
+      </div>
+      <div class="info-item">
+        <div class="icon">⏰</div>
+        <div class="details">
+          <h3>Business Hours</h3>
+          <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="contact-form-container">
+      @if (successMessage()) {
+        <div class="success-message">
+          <h3>Thank you for contacting us!</h3>
+          <p>{{ successMessage() }}</p>
+          <p>We'll get back to you as soon as possible.</p>
+          <button class="btn btn-primary" (click)="resetForm()">Send Another Message</button>
+        </div>
+      } @else {
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
+          <h2>Send Us a Message</h2>
+
+          @if (errorMessage()) {
+            <div class="error-message">
+              {{ errorMessage() }}
+            </div>
+          }
+
+          <!-- Name Field -->
+          <div class="form-group">
+            <label for="contactName">Your Name *</label>
+            <input
+              id="contactName"
+              type="text"
+              formControlName="contactName"
+              class="form-control"
+              [class.error]="hasError('contactName', 'required')"
+              placeholder="Enter your full name"
+            />
+            @if (hasError('contactName', 'required')) {
+              <span class="error-text">Name is required</span>
+            }
+          </div>
+
+          <!-- Email Field -->
+          <div class="form-group">
+            <label for="contactEmail">Your Email *</label>
+            <input
+              id="contactEmail"
+              type="email"
+              formControlName="contactEmail"
+              class="form-control"
+              [class.error]="hasError('contactEmail', 'required') || hasError('contactEmail', 'email')"
+              placeholder="Enter your email address"
+            />
+            @if (hasError('contactEmail', 'required')) {
+              <span class="error-text">Email is required</span>
+            }
+            @if (hasError('contactEmail', 'email')) {
+              <span class="error-text">Please enter a valid email</span>
+            }
+          </div>
+
+          <!-- Subject Field -->
+          <div class="form-group">
+            <label for="subject">Subject *</label>
+            <input
+              id="subject"
+              type="text"
+              formControlName="subject"
+              class="form-control"
+              [class.error]="hasError('subject', 'required')"
+              placeholder="What is this regarding?"
+            />
+            @if (hasError('subject', 'required')) {
+              <span class="error-text">Subject is required</span>
+            }
+          </div>
+
+          <!-- Message Field -->
+          <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea
+              id="message"
+              formControlName="message"
+              class="form-control"
+              [class.error]="hasError('message', 'required') || hasError('message', 'minlength')"
+              placeholder="Tell us how we can help you..."
+              rows="6"
+            ></textarea>
+            @if (hasError('message', 'required')) {
+              <span class="error-text">Message is required</span>
+            }
+            @if (hasError('message', 'minlength')) {
+              <span class="error-text">Message must be at least 10 characters</span>
+            }
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="btn btn-primary btn-block"
+            [disabled]="isLoading()"
+          >
+            @if (isLoading()) {
+              <span class="spinner"></span>
+              <span>Sending...</span>
+            } @else {
+              <span>Send Message</span>
+            }
+          </button>
+        </form>
+      }
+    </div>
+  </div>
+</div>

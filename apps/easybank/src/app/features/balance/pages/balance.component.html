@@ -1,0 +1,42 @@
+<div class="page-container">
+  <h1>Transaction History</h1>
+
+  @if (isLoading()) {
+    <p>Loading transactions...</p>
+  } @else if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+  } @else if (transactions().length === 0) {
+    <p>No transactions found.</p>
+  } @else {
+    <div class="balance-summary">
+      <div class="summary-card">
+        <h3>Current Balance</h3>
+        <div class="balance-amount">${{ currentBalance() | number }}</div>
+      </div>
+    </div>
+
+    <div class="transactions-list">
+      <h2>Recent Transactions</h2>
+      <div class="transaction-table">
+        @for (transaction of transactions(); track transaction.transactionId) {
+          <div class="transaction-row" [class.credit]="transaction.transactionType === 'Credit'" [class.debit]="transaction.transactionType === 'Debit'">
+            <div class="transaction-date">
+              <div class="date">{{ transaction.transactionDt | date: 'MMM d, y' }}</div>
+              <div class="id">{{ transaction.transactionId }}</div>
+            </div>
+            <div class="transaction-details">
+              <div class="summary">{{ transaction.transactionSummary }}</div>
+              <div class="type">{{ transaction.transactionType }}</div>
+            </div>
+            <div class="transaction-amount">
+              <div class="amount" [class.positive]="transaction.transactionType === 'Credit'" [class.negative]="transaction.transactionType === 'Debit'">
+                {{ transaction.transactionType === 'Credit' ? '+' : '-' }}${{ transaction.transactionAmt | number }}
+              </div>
+              <div class="closing-balance">Balance: ${{ transaction.closingBalance | number }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

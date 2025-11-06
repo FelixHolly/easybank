@@ -1,0 +1,131 @@
+.page-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+h1 {
+  margin-bottom: 2rem;
+  color: #2c3e50;
+}
+
+.balance-summary {
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.summary-card h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.balance-amount {
+  font-size: 2.5rem;
+  font-weight: 700;
+}
+
+.transactions-list h2 {
+  margin-bottom: 1.5rem;
+  color: #2c3e50;
+  font-size: 1.5rem;
+}
+
+.transaction-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.transaction-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 200px;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid #ecf0f1;
+  transition: background 0.2s;
+}
+
+.transaction-row:hover {
+  background: #f8f9fa;
+}
+
+.transaction-row:last-child {
+  border-bottom: none;
+}
+
+.transaction-date .date {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.transaction-date .id {
+  font-size: 0.8rem;
+  color: #7f8c8d;
+}
+
+.transaction-details .summary {
+  font-weight: 500;
+  color: #2c3e50;
+  margin-bottom: 0.25rem;
+}
+
+.transaction-details .type {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.transaction-amount {
+  text-align: right;
+}
+
+.transaction-amount .amount {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.transaction-amount .amount.positive {
+  color: #27ae60;
+}
+
+.transaction-amount .amount.negative {
+  color: #e74c3c;
+}
+
+.transaction-amount .closing-balance {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+}
+
+.error-message {
+  color: #e74c3c;
+  padding: 1rem;
+  background: #fadbd8;
+  border-radius: 4px;
+  margin: 1rem 0;
+}
+
+@media (max-width: 768px) {
+  .transaction-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .transaction-amount {
+    text-align: left;
+  }
+}

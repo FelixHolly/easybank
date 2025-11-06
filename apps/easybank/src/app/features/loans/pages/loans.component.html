@@ -1,0 +1,40 @@
+<div class="page-container">
+  <h1>My Loans</h1>
+
+  @if (isLoading()) {
+    <p>Loading loans...</p>
+  } @else if (errorMessage()) {
+    <div class="error-message">{{ errorMessage() }}</div>
+  } @else if (loans().length === 0) {
+    <p>You have no loans at this time.</p>
+  } @else {
+    <div class="loans-list">
+      @for (loan of loans(); track loan.loanNumber) {
+        <div class="loan-card">
+          <div class="loan-header">
+            <h3>{{ loan.loanType }}</h3>
+            <span class="loan-number">Loan #{{ loan.loanNumber }}</span>
+          </div>
+          <div class="loan-details">
+            <div class="detail-row">
+              <span class="label">Total Loan:</span>
+              <span class="value">${{ loan.totalLoan | number }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Amount Paid:</span>
+              <span class="value paid">${{ loan.amountPaid | number }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Outstanding Amount:</span>
+              <span class="value outstanding">${{ loan.outstandingAmount | number }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Start Date:</span>
+              <span class="value">{{ loan.startDt | date }}</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>
