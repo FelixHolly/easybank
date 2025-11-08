@@ -1,16 +1,8 @@
-/**
- * User Model
- * Core user data structure matching backend Customer model
- */
-
-export type Role = 'USER' | 'ADMIN' | 'MANAGER' | 'SUPPORT';
-
 export interface User {
   id: number;
   name: string;
   email: string;
   mobileNumber: string;
-  roles: Role[];
 }
 
 export interface LoginCredentials {

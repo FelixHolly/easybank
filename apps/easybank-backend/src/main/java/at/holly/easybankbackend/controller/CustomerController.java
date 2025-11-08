@@ -1,5 +1,7 @@
 package at.holly.easybankbackend.controller;
 
+import at.holly.easybankbackend.dto.CustomerMapper;
+import at.holly.easybankbackend.dto.CustomerDto;
 import at.holly.easybankbackend.model.Customer;
 import at.holly.easybankbackend.model.Role;
 import at.holly.easybankbackend.repository.CustomerRepository;
@@ -7,6 +9,7 @@ import at.holly.easybankbackend.service.AuthorityService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,9 +19,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.Date;
 import java.util.Set;
 
+/**
+ * Customer Controller
+ * Handles customer registration, authentication, and profile operations
+ * Uses DTOs to avoid exposing entity details
+ */
 @RestController
 @RequiredArgsConstructor
 public class CustomerController {
@@ -26,42 +33,56 @@ public class CustomerController {
   private final CustomerRepository customerRepository;
   private final PasswordEncoder passwordEncoder;
   private final AuthorityService authorityService;
+  private final CustomerMapper customerMapper;
 
-
-//  @GetMapping("/csrf")
-//  public Map<String, String> csrf(org.springframework.security.web.csrf.CsrfToken token) {
-//    return Map.of("token", token.getToken());
-//  }
-
-  //todo use DTO instead of Customer
+  /**
+   * Register a new customer
+   * Uses DTO to validate input and prevent over-posting
+   */
   @PostMapping("/register")
-  public ResponseEntity<String> registerUser(@RequestBody Customer customer) {
+  public ResponseEntity<String> registerUser(@RequestBody CustomerDto customerDto) {
     try {
+      // Check if user already exists
+      if (customerRepository.findByEmail(customerDto.getEmail()).isPresent()) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already registered");
+      }
+
+      // Convert DTO to entity
+      Customer customer = customerMapper.toEntity(customerDto);
+
+      // Hash password
       String hashPassword = passwordEncoder.encode(customer.getPassword());
       customer.setPassword(hashPassword);
-      customer.setCreateDt(new Date(System.currentTimeMillis()));
 
-      // Set default role if none provided
+      // Set default role
       customer.setRoles(Set.of(Role.USER));
 
       // Automatically assign authorities based on roles
       customer.setAuthorities(authorityService.getDefaultAuthoritiesForRoles(customer.getRoles()));
 
+      // Save customer
       Customer savedCustomer = customerRepository.save(customer);
 
       if (savedCustomer.getId() > 0){
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
       }
       return ResponseEntity.badRequest().body("User registration failed");
 
     } catch (Exception e) {
-      return ResponseEntity.badRequest().body("User registration failed");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("User registration failed: " + e.getMessage());
     }
   }
 
+  /**
+   * Get current user details
+   * Returns DTO without sensitive information like password
+   */
   @RequestMapping("/user")
-  public Customer getUserDetails(Authentication authentication) {
-    return customerRepository.findByEmail(authentication.getName()).orElseThrow(() -> new RuntimeException("User not found"));
+  public CustomerDto getUserDetails(Authentication authentication) {
+    Customer customer = customerRepository.findByEmail(authentication.getName())
+        .orElseThrow(() -> new RuntimeException("User not found"));
+    return customerMapper.toDto(customer);
   }
 
   @PostMapping("/logout")
