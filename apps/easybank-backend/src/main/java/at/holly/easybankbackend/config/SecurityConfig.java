@@ -3,6 +3,8 @@ package at.holly.easybankbackend.config;
 import at.holly.easybankbackend.exceptionhandling.CustomAccessDeniedHandler;
 import at.holly.easybankbackend.exceptionhandling.CustomBasicAuthenticationEntryPoint;
 import at.holly.easybankbackend.filter.CsrfCookieFilter;
+import at.holly.easybankbackend.filter.JWTTokenGeneratorFilter;
+import at.holly.easybankbackend.filter.JWTTokenValidatorFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -34,8 +36,9 @@ public class SecurityConfig {
         .ignoringRequestMatchers("/contact", "/register")
       )
       .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
-      .securityContext(securityContext -> securityContext.requireExplicitSave(false))
-      .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+      .addFilterAfter(new JWTTokenGeneratorFilter(), BasicAuthenticationFilter.class)
+      .addFilterBefore(new JWTTokenValidatorFilter(), BasicAuthenticationFilter.class)
+      .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .authorizeHttpRequests(
         (requests) -> requests
           .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance", "/user", "/logout").authenticated()

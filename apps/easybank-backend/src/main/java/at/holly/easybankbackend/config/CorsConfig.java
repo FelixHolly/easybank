@@ -18,8 +18,8 @@ public class CorsConfig {
       "http://localhost:4200"
     ));
     cors.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
-    cors.setAllowedHeaders(List.of("Content-Type","Authorization","X-XSRF-TOKEN"));
-    cors.setExposedHeaders(List.of("X-XSRF-TOKEN"));
+    cors.setAllowedHeaders(List.of("Content-Type","Authorization"));
+    cors.setExposedHeaders(List.of("Authorization"));
     cors.setAllowCredentials(true);
     cors.setMaxAge(1800L); // 30 min preflight cache
 

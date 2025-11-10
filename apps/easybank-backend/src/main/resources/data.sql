@@ -24,80 +24,30 @@ INSERT INTO customer_roles (customer_id, role) VALUES
     (5, 'MANAGER');         -- Admin: also MANAGER (full privileges)
 
 -- -------------------------
--- CUSTOMER AUTHORITIES (fine-grained permissions)
+-- CUSTOMER AUTHORITIES (Custom/Exception permissions only)
 -- -------------------------
--- Alice (USER) - Basic read permissions
-INSERT INTO customer_authorities (customer_id, authority) VALUES
-    (1, 'ACCOUNT_READ'),
-    (1, 'TRANSACTION_READ'),
-    (1, 'CARD_READ'),
-    (1, 'LOAN_READ'),
-    (1, 'CONTACT_WRITE'),
-    (1, 'NOTICE_READ');
+-- With RBAC, authorities are automatically granted based on roles via AuthorityService.
+-- This table stores ONLY custom/exception authorities beyond role defaults.
+--
+-- Examples of when to use custom authorities:
+-- 1. Temporarily grant extra permission (e.g., USER gets REPORT_GENERATE for audit)
+-- 2. Revoke specific permission (future enhancement: negative authorities)
+-- 3. Grant permission before role change (e.g., USER testing MANAGER features)
+--
+-- For demonstration, we'll add a few custom authorities:
 
--- Bob (USER) - Basic read permissions
+-- Alice gets special report access (beyond USER role)
 INSERT INTO customer_authorities (customer_id, authority) VALUES
-    (2, 'ACCOUNT_READ'),
-    (2, 'TRANSACTION_READ'),
-    (2, 'CARD_READ'),
-    (2, 'LOAN_READ'),
-    (2, 'CONTACT_WRITE'),
-    (2, 'NOTICE_READ');
+    (1, 'REPORT_GENERATE');
 
--- Charlie (USER) - Basic read permissions
+-- Charlie gets temporary card activation rights (beyond USER role)
 INSERT INTO customer_authorities (customer_id, authority) VALUES
-    (3, 'ACCOUNT_READ'),
-    (3, 'TRANSACTION_READ'),
-    (3, 'CARD_READ'),
-    (3, 'LOAN_READ'),
-    (3, 'CONTACT_WRITE'),
-    (3, 'NOTICE_READ');
+    (3, 'CARD_ACTIVATE');
 
--- Diana (USER + MANAGER) - Manager permissions + custom approval authority
-INSERT INTO customer_authorities (customer_id, authority) VALUES
-    (4, 'ACCOUNT_READ'),
-    (4, 'ACCOUNT_WRITE'),
-    (4, 'TRANSACTION_READ'),
-    (4, 'TRANSACTION_WRITE'),
-    (4, 'TRANSACTION_APPROVE'),
-    (4, 'CARD_READ'),
-    (4, 'CARD_WRITE'),
-    (4, 'CARD_ACTIVATE'),
-    (4, 'CARD_BLOCK'),
-    (4, 'LOAN_READ'),
-    (4, 'LOAN_WRITE'),
-    (4, 'LOAN_APPROVE'),
-    (4, 'USER_READ'),
-    (4, 'CONTACT_READ'),
-    (4, 'CONTACT_WRITE'),
-    (4, 'NOTICE_READ'),
-    (4, 'NOTICE_WRITE'),
-    (4, 'REPORT_GENERATE');
-
--- Admin (USER + ADMIN + MANAGER) - Full permissions
-INSERT INTO customer_authorities (customer_id, authority) VALUES
-    (5, 'ACCOUNT_READ'),
-    (5, 'ACCOUNT_WRITE'),
-    (5, 'ACCOUNT_DELETE'),
-    (5, 'TRANSACTION_READ'),
-    (5, 'TRANSACTION_WRITE'),
-    (5, 'TRANSACTION_APPROVE'),
-    (5, 'CARD_READ'),
-    (5, 'CARD_WRITE'),
-    (5, 'CARD_ACTIVATE'),
-    (5, 'CARD_BLOCK'),
-    (5, 'LOAN_READ'),
-    (5, 'LOAN_WRITE'),
-    (5, 'LOAN_APPROVE'),
-    (5, 'USER_READ'),
-    (5, 'USER_WRITE'),
-    (5, 'USER_DELETE'),
-    (5, 'CONTACT_READ'),
-    (5, 'CONTACT_WRITE'),
-    (5, 'NOTICE_READ'),
-    (5, 'NOTICE_WRITE'),
-    (5, 'REPORT_GENERATE'),
-    (5, 'REPORT_EXPORT');
+-- Note: Bob, Diana, and Admin don't need custom authorities
+-- - Bob: Gets all authorities from USER role (via AuthorityService)
+-- - Diana: Gets authorities from USER + MANAGER roles (via AuthorityService)
+-- - Admin: Gets all authorities from ADMIN role (via AuthorityService)
 
 -- -------------------------
 -- ACCOUNTS
