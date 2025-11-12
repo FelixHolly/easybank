@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-/**
+/**ø
  * This class is used to authenticate the user
  * It is only active if the profile is not prod
  */
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Component;
 public class EasyBankAuthenticationProvider implements AuthenticationProvider {
 
   private final UserDetailsService userDetailsService;
-  private final PasswordEncoder passwordEncoder;
 
   @Override
   public Authentication authenticate(Authentication authentication) throws AuthenticationException {

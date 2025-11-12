@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,6 +24,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Profile("!prod")
 @Configuration
 @EnableMethodSecurity  // Enables @PreAuthorize, @PostAuthorize, @Secured annotations
+@EnableWebSecurity(debug = true)
 public class SecurityConfig {
 
   @Bean
