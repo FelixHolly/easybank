@@ -31,17 +31,20 @@ public class KeyCloakRoleConverter implements Converter<Jwt, Collection<GrantedA
    */
   @Override
   public Collection<GrantedAuthority> convert(@NonNull Jwt jwt) {
+    log.info("Converting Keycloak JWT roles to Spring Security authorities");
+    log.debug("JWT Subject: {}, Issuer: {}", jwt.getSubject(), jwt.getIssuer());
+
     Map<String, Object> realmAccess = extractRealmAccess(jwt);
 
     if (realmAccess == null || realmAccess.isEmpty()) {
-      log.debug("No realm_access claim found in JWT");
+      log.warn("No realm_access claim found in JWT for subject: {}", jwt.getSubject());
       return Collections.emptySet();
     }
 
     Collection<String> roles = extractRoles(realmAccess);
 
     if (roles == null || roles.isEmpty()) {
-      log.debug("No roles found in realm_access claim");
+      log.warn("No roles found in realm_access claim for subject: {}", jwt.getSubject());
       return Collections.emptySet();
     }
 
@@ -49,16 +52,19 @@ public class KeyCloakRoleConverter implements Converter<Jwt, Collection<GrantedA
       .map(role -> new SimpleGrantedAuthority(ROLE_PREFIX + role))
       .collect(Collectors.toSet());
 
-    log.debug("Converted {} Keycloak roles to authorities", authorities.size());
+    log.info("Converted {} Keycloak roles to authorities: {}", authorities.size(),
+      authorities.stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
     return authorities;
   }
 
   @SuppressWarnings("unchecked")
   private Map<String, Object> extractRealmAccess(Jwt jwt) {
     try {
-      return (Map<String, Object>) jwt.getClaims().get(REALM_ACCESS_CLAIM);
+      Map<String, Object> realmAccess = (Map<String, Object>) jwt.getClaims().get(REALM_ACCESS_CLAIM);
+      log.debug("Extracted realm_access: {}", realmAccess);
+      return realmAccess;
     } catch (ClassCastException e) {
-      log.warn("realm_access claim has unexpected type", e);
+      log.error("realm_access claim has unexpected type. Available claims: {}", jwt.getClaims().keySet(), e);
       return null;
     }
   }
@@ -66,9 +72,11 @@ public class KeyCloakRoleConverter implements Converter<Jwt, Collection<GrantedA
   @SuppressWarnings("unchecked")
   private Collection<String> extractRoles(Map<String, Object> realmAccess) {
     try {
-      return (Collection<String>) realmAccess.get(ROLES_CLAIM);
+      Collection<String> roles = (Collection<String>) realmAccess.get(ROLES_CLAIM);
+      log.debug("Extracted roles from realm_access: {}", roles);
+      return roles;
     } catch (ClassCastException e) {
-      log.warn("roles claim has unexpected type", e);
+      log.error("roles claim has unexpected type in realm_access", e);
       return null;
     }
   }

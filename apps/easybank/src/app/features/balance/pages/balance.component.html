@@ -1,42 +1,134 @@
-<div class="page-container">
-  <h1>Transaction History</h1>
+<app-nav/>
 
-  @if (isLoading()) {
-    <p>Loading transactions...</p>
-  } @else if (errorMessage()) {
-    <div class="error-message">{{ errorMessage() }}</div>
-  } @else if (transactions().length === 0) {
-    <p>No transactions found.</p>
-  } @else {
-    <div class="balance-summary">
-      <div class="summary-card">
-        <h3>Current Balance</h3>
-        <div class="balance-amount">${{ currentBalance() | number }}</div>
-      </div>
+<div class="eb-balance-page">
+  <!-- Header -->
+  <header class="eb-balance-header">
+    <div>
+      <h1>Transaction history</h1>
+      <p>
+        Review your recent activity, track incoming and outgoing payments, and keep your EasyBank
+        account in check.
+      </p>
     </div>
+    <div class="eb-balance-header__meta">
+      <span class="eb-pill">Secure activity view</span>
+    </div>
+  </header>
 
-    <div class="transactions-list">
-      <h2>Recent Transactions</h2>
-      <div class="transaction-table">
-        @for (transaction of transactions(); track transaction.transactionId) {
-          <div class="transaction-row" [class.credit]="transaction.transactionType === 'Credit'" [class.debit]="transaction.transactionType === 'Debit'">
-            <div class="transaction-date">
-              <div class="date">{{ transaction.transactionDt | date: 'MMM d, y' }}</div>
-              <div class="id">{{ transaction.transactionId }}</div>
+  <!-- Body -->
+  <section class="eb-balance-body">
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="eb-balance-skeleton">
+        <div class="eb-skeleton-card eb-skeleton-card--summary">
+          <div class="eb-skeleton-line eb-skeleton-line--title"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--text"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--meta"></div>
+        </div>
+        <div class="eb-skeleton-list">
+          @for (_ of [1, 2, 3, 4]; track _;) {
+            <div class="eb-skeleton-row">
+              <div class="eb-skeleton-line eb-skeleton-line--text short"></div>
+              <div class="eb-skeleton-line eb-skeleton-line--text"></div>
+              <div class="eb-skeleton-line eb-skeleton-line--meta"></div>
             </div>
-            <div class="transaction-details">
-              <div class="summary">{{ transaction.transactionSummary }}</div>
-              <div class="type">{{ transaction.transactionType }}</div>
-            </div>
-            <div class="transaction-amount">
-              <div class="amount" [class.positive]="transaction.transactionType === 'Credit'" [class.negative]="transaction.transactionType === 'Debit'">
-                {{ transaction.transactionType === 'Credit' ? '+' : '-' }}${{ transaction.transactionAmt | number }}
-              </div>
-              <div class="closing-balance">Balance: ${{ transaction.closingBalance | number }}</div>
-            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <!-- Error state -->
+      @if (errorMessage()) {
+        <div class="eb-alert eb-alert--error">
+          <div class="eb-alert__icon">⚠️</div>
+          <div class="eb-alert__content">
+            <h2>We couldn’t load your transactions</h2>
+            <p>{{ errorMessage() }}</p>
           </div>
-        }
-      </div>
-    </div>
-  }
+          <button type="button" class="btn btn--ghost" (click)="retry()">
+            Try again
+          </button>
+        </div>
+      }
+
+      <!-- Empty state -->
+      @if (!errorMessage() && transactions().length === 0) {
+        <div class="eb-empty-state">
+          <div class="eb-empty-state__icon">📭</div>
+          <h2>No transactions yet</h2>
+          <p>
+            Once you start using your EasyBank account, your transaction history will appear here.
+          </p>
+        </div>
+      }
+
+      <!-- Content -->
+      @if (!errorMessage() && transactions().length > 0) {
+        <div class="eb-balance-grid">
+          <!-- Summary card -->
+          <article class="eb-balance-card">
+            <header class="eb-balance-card__header">
+              <div>
+                <span class="eb-balance-card__eyebrow">Current balance</span>
+                <h2>
+                  {{ currentBalance() | currency : 'USD' : 'symbol' : '1.2-2' }}
+                </h2>
+              </div>
+            </header>
+            <p class="eb-balance-card__hint">
+              This is the closing balance from your most recent transaction.
+            </p>
+          </article>
+
+          <!-- Transaction list -->
+          <section class="eb-transactions">
+            <header class="eb-transactions__header">
+              <h2>Recent activity</h2>
+              <p>Most recent transactions appear first.</p>
+            </header>
+
+            <div class="eb-transactions-list">
+              @for (transaction of transactions(); track transaction.transactionId) {
+                <article
+                  class="eb-transaction-row"
+                  [class.eb-transaction-row--credit]="isCredit(transaction)"
+                  [class.eb-transaction-row--debit]="isDebit(transaction)"
+                >
+                  <div class="eb-transaction-date">
+                    <div class="date">
+                      {{ transaction.transactionDt | date: 'MMM d, y' }}
+                    </div>
+                    <div class="id">ID: {{ transaction.transactionId }}</div>
+                  </div>
+
+                  <div class="eb-transaction-details">
+                    <div class="summary">
+                      {{ transaction.transactionSummary }}
+                    </div>
+                    <div class="type">
+                      {{ transaction.transactionType }}
+                    </div>
+                  </div>
+
+                  <div class="eb-transaction-amount">
+                    <div
+                      class="amount"
+                      [class.amount--positive]="isCredit(transaction)"
+                      [class.amount--negative]="isDebit(transaction)"
+                    >
+                      {{ isCredit(transaction) ? '+' : '-' }}
+                      {{ transaction.transactionAmt | currency : 'USD' : 'symbol' : '1.2-2' }}
+                    </div>
+                    <div class="closing-balance">
+                      Balance:
+                      {{ transaction.closingBalance | currency : 'USD' : 'symbol' : '1.2-2' }}
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+        </div>
+      }
+    }
+  </section>
 </div>

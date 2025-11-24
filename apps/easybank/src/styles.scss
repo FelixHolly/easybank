@@ -1,1 +1,80 @@
-/* You can add global styles to this file, and also import other style files */
+/* ==========================================================================
+   EASYBANK DESIGN SYSTEM – GLOBAL STYLES
+   ========================================================================== */
+
+/* Import design tokens */
+@use './styles/variables' as *;
+@use './styles/theme' as *;
+
+/* GLOBAL RESET / NORMALIZATION */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  font-family: $font-family-base;
+  background: $color-bg-main; // DARK GRADIENT BACKGROUND
+  color: $color-text-on-dark;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar (optional but makes it clean) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
+  border-radius: 20px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.6);
+}
+
+/* DEFAULT LINKS */
+a {
+  color: $color-primary;
+  text-decoration: none;
+
+  &:hover {
+    color: lighten($color-primary, 12%);
+  }
+}
+
+/* HEADINGS SMOOTHER */
+h1, h2, h3, h4, h5 {
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* GLOBAL PAGE WRAPPER (optional utility) */
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-inline: 1.25rem;
+}
+
+/* Utility classes */
+.text-muted {
+  color: $color-text-muted;
+}
+
+.text-success {
+  color: $color-success;
+}
+
+.text-warning {
+  color: $color-warning;
+}
+
+.text-error {
+  color: $color-error;
+}

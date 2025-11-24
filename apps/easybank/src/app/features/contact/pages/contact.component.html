@@ -1,63 +1,103 @@
-<div class="page-container">
-  <div class="contact-header">
-    <h1>Contact Us</h1>
-    <p>Have a question or need assistance? We're here to help!</p>
-  </div>
-
-  <div class="contact-content">
-    <div class="contact-info">
-      <h2>Get In Touch</h2>
-      <div class="info-item">
-        <div class="icon">📧</div>
-        <div class="details">
-          <h3>Email</h3>
-          <p>support&#64;easybank.com</p>
-        </div>
-      </div>
-      <div class="info-item">
-        <div class="icon">📞</div>
-        <div class="details">
-          <h3>Phone</h3>
-          <p>1-800-EASYBANK</p>
-        </div>
-      </div>
-      <div class="info-item">
-        <div class="icon">📍</div>
-        <div class="details">
-          <h3>Address</h3>
-          <p>123 Banking Street<br>Financial District<br>New York, NY 10004</p>
-        </div>
-      </div>
-      <div class="info-item">
-        <div class="icon">⏰</div>
-        <div class="details">
-          <h3>Business Hours</h3>
-          <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 10:00 AM - 4:00 PM<br>Sunday: Closed</p>
-        </div>
-      </div>
+<div class="eb-contact-page">
+  <!-- Header -->
+  <header class="eb-contact-header">
+    <div>
+      <h1>Contact EasyBank support</h1>
+      <p>
+        Have a question, spotted something unusual, or need help with your account? Our support team
+        is here for you.
+      </p>
     </div>
+    <div class="eb-contact-header__meta">
+      <span class="eb-pill">Secure support channel</span>
+    </div>
+  </header>
 
-    <div class="contact-form-container">
+  <!-- Content -->
+  <section class="eb-contact-body">
+    <!-- Left side: info -->
+    <aside class="eb-contact-info">
+      <h2>Get in touch</h2>
+      <p class="eb-contact-info__sub">
+        Choose the option that’s most convenient for you. For sensitive account details we may ask
+        you to verify your identity.
+      </p>
+
+      <div class="eb-contact-info__cards">
+        <div class="info-item">
+          <div class="icon">📧</div>
+          <div class="details">
+            <h3>Email</h3>
+            <p>support@easybank.com</p>
+            <span class="hint">We usually respond within 1 business day.</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="icon">📞</div>
+          <div class="details">
+            <h3>Phone</h3>
+            <p>1-800-EASYBANK</p>
+            <span class="hint">Available Mon–Fri, 9:00–18:00 (local time).</span>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="icon">💬</div>
+          <div class="details">
+            <h3>In-app chat</h3>
+            <p>Fastest way to reach us directly from your EasyBank app.</p>
+            <span class="hint">Open the app and tap “Support” to start a chat.</span>
+          </div>
+        </div>
+
+        <div class="info-item info-item--muted">
+          <div class="icon">📍</div>
+          <div class="details">
+            <h3>Mailing address</h3>
+            <p>
+              EasyBank HQ<br />
+              123 Banking Street<br />
+              Financial District<br />
+              New York, NY 10004
+            </p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Right side: form -->
+    <div class="eb-contact-form-wrapper">
       @if (successMessage()) {
-        <div class="success-message">
-          <h3>Thank you for contacting us!</h3>
+        <div class="eb-message-card eb-message-card--success">
+          <h2>Thank you for contacting us</h2>
           <p>{{ successMessage() }}</p>
-          <p>We'll get back to you as soon as possible.</p>
-          <button class="btn btn-primary" (click)="resetForm()">Send Another Message</button>
+          <p>We’ve received your message and will get back to you as soon as possible.</p>
+          <button class="btn btn--primary" type="button" (click)="resetForm()">
+            Send another message
+          </button>
         </div>
       } @else {
-        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form">
-          <h2>Send Us a Message</h2>
+        <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="eb-contact-form">
+          <h2>Send us a secure message</h2>
+          <p class="form-subtitle">
+            Please do not include your full card number or password. If needed, a support specialist
+            will ask you to verify your identity through a secure channel.
+          </p>
 
           @if (errorMessage()) {
-            <div class="error-message">
-              {{ errorMessage() }}
+            <div class="eb-alert eb-alert--error">
+              <div class="eb-alert__icon">⚠️</div>
+              <div class="eb-alert__content">
+                <h3>Something went wrong</h3>
+                <p>{{ errorMessage() }}</p>
+              </div>
             </div>
           }
 
           <!-- Name Field -->
           <div class="form-group">
-            <label for="contactName">Your Name *</label>
+            <label for="contactName">Your name *</label>
             <input
               id="contactName"
               type="text"
@@ -67,13 +107,13 @@
               placeholder="Enter your full name"
             />
             @if (hasError('contactName', 'required')) {
-              <span class="error-text">Name is required</span>
+              <span class="error-text">Name is required.</span>
             }
           </div>
 
           <!-- Email Field -->
           <div class="form-group">
-            <label for="contactEmail">Your Email *</label>
+            <label for="contactEmail">Your email *</label>
             <input
               id="contactEmail"
               type="email"
@@ -83,10 +123,10 @@
               placeholder="Enter your email address"
             />
             @if (hasError('contactEmail', 'required')) {
-              <span class="error-text">Email is required</span>
+              <span class="error-text">Email is required.</span>
             }
             @if (hasError('contactEmail', 'email')) {
-              <span class="error-text">Please enter a valid email</span>
+              <span class="error-text">Please enter a valid email.</span>
             }
           </div>
 
@@ -102,7 +142,7 @@
               placeholder="What is this regarding?"
             />
             @if (hasError('subject', 'required')) {
-              <span class="error-text">Subject is required</span>
+              <span class="error-text">Subject is required.</span>
             }
           </div>
 
@@ -118,28 +158,28 @@
               rows="6"
             ></textarea>
             @if (hasError('message', 'required')) {
-              <span class="error-text">Message is required</span>
+              <span class="error-text">Message is required.</span>
             }
             @if (hasError('message', 'minlength')) {
-              <span class="error-text">Message must be at least 10 characters</span>
+              <span class="error-text">Message must be at least 10 characters.</span>
             }
           </div>
 
           <!-- Submit Button -->
           <button
             type="submit"
-            class="btn btn-primary btn-block"
+            class="btn btn--primary btn--block"
             [disabled]="isLoading()"
           >
             @if (isLoading()) {
               <span class="spinner"></span>
-              <span>Sending...</span>
+              <span>Sending…</span>
             } @else {
-              <span>Send Message</span>
+              <span>Send message</span>
             }
           </button>
         </form>
       }
     </div>
-  </div>
+  </section>
 </div>

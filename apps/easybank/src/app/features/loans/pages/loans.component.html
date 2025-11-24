@@ -1,40 +1,181 @@
-<div class="page-container">
-  <h1>My Loans</h1>
+<app-nav/>
+<div class="eb-loans-page">
+  <!-- Header -->
+  <header class="eb-loans-header">
+    <div>
+      <h1>My loans</h1>
+      <p>
+        Track your EasyBank loans, see how much you’ve repaid, and what’s still outstanding.
+      </p>
+    </div>
+    <div class="eb-loans-header__meta">
+      <span class="eb-pill">Repayments overview</span>
+    </div>
+  </header>
 
-  @if (isLoading()) {
-    <p>Loading loans...</p>
-  } @else if (errorMessage()) {
-    <div class="error-message">{{ errorMessage() }}</div>
-  } @else if (loans().length === 0) {
-    <p>You have no loans at this time.</p>
-  } @else {
-    <div class="loans-list">
-      @for (loan of loans(); track loan.loanNumber) {
-        <div class="loan-card">
-          <div class="loan-header">
-            <h3>{{ loan.loanType }}</h3>
-            <span class="loan-number">Loan #{{ loan.loanNumber }}</span>
+  <!-- Body -->
+  <section class="eb-loans-body">
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="eb-loans-skeleton">
+        <div class="eb-skeleton-card eb-skeleton-card--summary">
+          <div class="eb-skeleton-line eb-skeleton-line--title"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--text"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--meta"></div>
+        </div>
+        <div class="eb-skeleton-list">
+          @for (_ of [1, 2, 3]; track _;) {
+            <div class="eb-skeleton-card eb-skeleton-card--loan">
+              <div class="eb-skeleton-line eb-skeleton-line--title"></div>
+              <div class="eb-skeleton-line eb-skeleton-line--text"></div>
+              <div class="eb-skeleton-line eb-skeleton-line--text short"></div>
+              <div class="eb-skeleton-line eb-skeleton-line--meta"></div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <!-- Error -->
+      @if (errorMessage()) {
+        <div class="eb-alert eb-alert--error">
+          <div class="eb-alert__icon">⚠️</div>
+          <div class="eb-alert__content">
+            <h2>We couldn’t load your loans</h2>
+            <p>{{ errorMessage() }}</p>
           </div>
-          <div class="loan-details">
-            <div class="detail-row">
-              <span class="label">Total Loan:</span>
-              <span class="value">${{ loan.totalLoan | number }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Amount Paid:</span>
-              <span class="value paid">${{ loan.amountPaid | number }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Outstanding Amount:</span>
-              <span class="value outstanding">${{ loan.outstandingAmount | number }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Start Date:</span>
-              <span class="value">{{ loan.startDt | date }}</span>
-            </div>
-          </div>
+          <button type="button" class="btn btn--ghost" (click)="retry()">
+            Try again
+          </button>
         </div>
       }
-    </div>
-  }
+
+      <!-- Empty state -->
+      @if (!errorMessage() && loans().length === 0) {
+        <div class="eb-empty-state">
+          <div class="eb-empty-state__icon">📄</div>
+          <h2>You have no loans at this time</h2>
+          <p>
+            When you open a loan with EasyBank, you’ll be able to track your repayments in detail
+            right here.
+          </p>
+        </div>
+      }
+
+      <!-- Loans content -->
+      @if (!errorMessage() && loans().length > 0) {
+        <div class="eb-loans-layout">
+          <!-- Summary panel -->
+          <aside class="eb-loans-summary">
+            <h2>Loan summary</h2>
+
+            <div class="eb-loans-summary__metric">
+              <span class="label">Total borrowed</span>
+              <span class="value">
+                {{ totalLoanAmount() | currency : 'USD' : 'symbol' : '1.0-0' }}
+              </span>
+            </div>
+
+            <div class="eb-loans-summary__metric">
+              <span class="label">Total outstanding</span>
+              <span class="value value--outstanding">
+                {{ totalOutstandingAmount() | currency : 'USD' : 'symbol' : '1.0-0' }}
+              </span>
+            </div>
+
+            <div class="eb-loans-summary__metric">
+              <span class="label">Active loans</span>
+              <span class="value">
+                {{ loans().length }}
+              </span>
+            </div>
+
+            <p class="hint">
+              Making payments on time helps you maintain a strong repayment history and credit
+              profile.
+            </p>
+          </aside>
+
+          <!-- Loans list -->
+          <section class="eb-loans-list">
+            <header class="eb-loans-list__header">
+              <h2>My loans</h2>
+              <p>See each loan’s total, repaid amount, and outstanding balance.</p>
+            </header>
+
+            <div class="eb-loan-cards">
+              @for (loan of loans(); track loan.loanNumber) {
+                <article
+                  class="eb-loan-card"
+                  [class.eb-loan-card--paid]="isFullyRepaid(loan)"
+                  [class.eb-loan-card--early]="isEarlyStage(loan)"
+                  [class.eb-loan-card--mid]="isMidStage(loan)"
+                  [class.eb-loan-card--late]="isLateStage(loan)"
+                >
+                  <header class="eb-loan-card__header">
+                    <div>
+                      <span class="loan-type">{{ loan.loanType }}</span>
+                      <span class="loan-number">Loan #{{ loan.loanNumber }}</span>
+                    </div>
+                    <span class="eb-loan-status" *ngIf="isFullyRepaid(loan); else activeStatus">
+                      Paid off
+                    </span>
+                    <ng-template #activeStatus>
+                      <span class="eb-loan-status eb-loan-status--active">
+                        Active
+                      </span>
+                    </ng-template>
+                  </header>
+
+                  <div class="eb-loan-card__body">
+                    <div class="detail-row">
+                      <span class="label">Total loan</span>
+                      <span class="value">
+                        {{ loan.totalLoan | currency : 'USD' : 'symbol' : '1.0-0' }}
+                      </span>
+                    </div>
+
+                    <div class="detail-row">
+                      <span class="label">Amount paid</span>
+                      <span class="value value--paid">
+                        {{ loan.amountPaid | currency : 'USD' : 'symbol' : '1.0-0' }}
+                      </span>
+                    </div>
+
+                    <div class="detail-row">
+                      <span class="label">Outstanding</span>
+                      <span class="value value--outstanding">
+                        {{ loan.outstandingAmount | currency : 'USD' : 'symbol' : '1.0-0' }}
+                      </span>
+                    </div>
+
+                    <div class="detail-row">
+                      <span class="label">Start date</span>
+                      <span class="value">
+                        {{ loan.startDt | date : 'MMM d, y' }}
+                      </span>
+                    </div>
+
+                    <div class="repayment-row">
+                      <div class="repayment-header">
+                        <span>Repayment progress</span>
+                        <span class="repayment-value">
+                          {{ repaymentPercent(loan) | number : '1.0-0' }}%
+                        </span>
+                      </div>
+                      <div class="progress-bar">
+                        <div
+                          class="progress"
+                          [style.width.%]="repaymentPercent(loan)"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+        </div>
+      }
+    }
+  </section>
 </div>

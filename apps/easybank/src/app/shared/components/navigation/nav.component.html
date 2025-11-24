@@ -1,0 +1,84 @@
+<nav class="eb-dashboard-nav">
+  <div class="eb-dashboard-nav__inner">
+    <!-- Left: Brand -->
+    <div class="eb-dashboard-nav__brand">
+      <span class="eb-logo-text">EasyBank</span>
+    </div>
+
+    <!-- Right: Burger + Links -->
+    <div class="eb-dashboard-nav__right">
+      <!-- Mobile menu toggle -->
+      <button
+        type="button"
+        class="eb-menu-toggle"
+        (click)="toggleMenu()"
+        aria-label="Toggle navigation"
+        [attr.aria-expanded]="isMenuOpen()"
+      >
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+      </button>
+
+      <!-- Links -->
+      <div
+        class="eb-dashboard-nav__links"
+        [class.is-open]="isMenuOpen()"
+      >
+        <a
+          routerLink="/dashboard"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="nav-link"
+          (click)="closeMenu()"
+        >
+          Home
+        </a>
+
+        <a
+          routerLink="/account"
+          routerLinkActive="active"
+          class="nav-link"
+          (click)="closeMenu()"
+        >
+          Account
+        </a>
+
+        <a
+          routerLink="/balance"
+          routerLinkActive="active"
+          class="nav-link"
+          (click)="closeMenu()"
+        >
+          Balance
+        </a>
+
+        <a
+          routerLink="/cards"
+          routerLinkActive="active"
+          class="nav-link"
+          (click)="closeMenu()"
+        >
+          Cards
+        </a>
+
+        <a
+          routerLink="/loans"
+          routerLinkActive="active"
+          class="nav-link"
+          (click)="closeMenu()"
+        >
+          Loans
+        </a>
+
+        <button
+          type="button"
+          class="nav-link nav-link--logout"
+          (click)="onLogout()"
+        >
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+</nav>

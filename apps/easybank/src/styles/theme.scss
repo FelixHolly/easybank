@@ -1,0 +1,30 @@
+/* ==========================================================================
+   EASYBANK THEME VARIABLES (CSS VAR OPTIONAL)
+   ========================================================================== */
+
+/* Future-proof theme token system */
+:root {
+  --eb-primary: #06b6d4;
+  --eb-success: #22c55e;
+  --eb-info: #6366f1;
+  --eb-warning: #facc15;
+  --eb-error: #ef4444;
+
+  --eb-text: #e5e7eb;
+  --eb-text-muted: #94a3b8;
+
+  --eb-surface: #0b1020;
+  --eb-surface-dark: #020617;
+  --eb-border: rgba(148, 163, 184, 0.28);
+
+  --eb-radius-md: 0.9rem;
+  --eb-shadow-card: 0 12px 26px rgba(15, 23, 42, 0.15);
+}
+
+/* Light mode theme (optional) */
+[data-theme='light'] {
+  --eb-text: #0f172a;
+  --eb-text-muted: #64748b;
+  --eb-surface: #ffffff;
+  --eb-border: rgba(226, 232, 240, 1);
+}

@@ -4,9 +4,10 @@ import at.holly.easybankbackend.model.AccountTransaction;
 import at.holly.easybankbackend.model.Customer;
 import at.holly.easybankbackend.repository.AccountTransactionRepository;
 import at.holly.easybankbackend.repository.CustomerRepository;
+import at.holly.easybankbackend.service.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -22,16 +23,21 @@ public class BalanceController {
 
   private final AccountTransactionRepository accountTransactionRepository;
   private final CustomerRepository customerRepository;
+  private final JwtService jwtService;
 
   /**
    * Get transaction history for a customer
-   * Requires TRANSACTION:READ authority
+   * Extracts email from JWT token claims
    */
   @GetMapping("/myBalance")
-  public List<AccountTransaction> getBalanceDetails (@RequestParam String email) {
+  public List<AccountTransaction> getBalanceDetails(Authentication authentication) {
+    // Extract email from JWT token using JwtService
+    String email = jwtService.extractEmail(authentication);
+    System.out.println(email);
+
     Optional<Customer> maybeCustomer = customerRepository.findByEmail(email);
     if (maybeCustomer.isEmpty()) {
-      throw new RuntimeException("Customer not found");
+      throw new RuntimeException("Customer not found with email: " + email);
     }
 
     return accountTransactionRepository.findByCustomerIdOrderByTransactionDtDesc(maybeCustomer.get().getId());

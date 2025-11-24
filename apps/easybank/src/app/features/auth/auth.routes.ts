@@ -3,14 +3,9 @@ import { Routes } from '@angular/router';
 /**
  * Auth Feature Routes
  * Lazy-loaded authentication routes
+ * Note: Login is handled by Keycloak directly
  */
 export const authRoutes: Routes = [
-  {
-    path: 'login',
-    loadComponent: () =>
-      import('./pages/login/login.component').then((m) => m.LoginComponent),
-    title: 'Login - EasyBank',
-  },
   {
     path: 'register',
     loadComponent: () =>
@@ -27,7 +22,7 @@ export const authRoutes: Routes = [
   },
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: '/home',
     pathMatch: 'full',
   },
 ];

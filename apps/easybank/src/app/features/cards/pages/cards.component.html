@@ -1,40 +1,180 @@
-<div class="page-container">
-  <h1>My Cards</h1>
+<app-nav/>
 
-  @if (isLoading()) {
-    <p>Loading cards...</p>
-  } @else if (errorMessage()) {
-    <div class="error-message">{{ errorMessage() }}</div>
-  } @else if (cards().length === 0) {
-    <p>You have no cards at this time.</p>
-  } @else {
-    <div class="cards-list">
-      @for (card of cards(); track card.cardId) {
-        <div class="card-item">
-          <div class="card-visual">
-            <div class="card-chip"></div>
-            <div class="card-type">{{ card.cardType }}</div>
-            <div class="card-number">**** **** **** {{ card.cardNumber.slice(-4) }}</div>
+<div class="eb-cards-page">
+  <!-- Header -->
+  <header class="eb-cards-header">
+    <div>
+      <h1>My cards</h1>
+      <p>
+        View and monitor your EasyBank credit and debit cards, their limits, and available funds.
+      </p>
+    </div>
+    <div class="eb-cards-header__meta">
+      <span class="eb-pill">Secure card overview</span>
+    </div>
+  </header>
+
+  <!-- Body -->
+  <section class="eb-cards-body">
+    <!-- Loading -->
+    @if (isLoading()) {
+      <div class="eb-cards-skeleton">
+        <div class="eb-skeleton-card eb-skeleton-card--summary">
+          <div class="eb-skeleton-line eb-skeleton-line--title"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--text"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--meta"></div>
+        </div>
+        <div class="eb-skeleton-list">
+          @for (_ of [1, 2, 3]; track _;) {
+            <div class="eb-skeleton-card eb-skeleton-card--card">
+              <div class="eb-skeleton-line eb-skeleton-line--title"></div>
+              <div class="eb-skeleton-line eb-skeleton-line--text"></div>
+              <div class="eb-skeleton-line eb-skeleton-line--text short"></div>
+              <div class="eb-skeleton-line eb-skeleton-line--meta"></div>
+            </div>
+          }
+        </div>
+      </div>
+    } @else {
+      <!-- Error -->
+      @if (errorMessage()) {
+        <div class="eb-alert eb-alert--error">
+          <div class="eb-alert__icon">⚠️</div>
+          <div class="eb-alert__content">
+            <h2>We couldn’t load your cards</h2>
+            <p>{{ errorMessage() }}</p>
           </div>
-          <div class="card-details">
-            <div class="detail-row">
-              <span class="label">Total Limit:</span>
-              <span class="value">${{ card.totalLimit | number }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Amount Used:</span>
-              <span class="value used">${{ card.amountUsed | number }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="label">Available:</span>
-              <span class="value available">${{ card.availableAmount | number }}</span>
-            </div>
-            <div class="progress-bar">
-              <div class="progress" [style.width.%]="(card.amountUsed / card.totalLimit) * 100"></div>
-            </div>
-          </div>
+          <button type="button" class="btn btn--ghost" (click)="retry()">
+            Try again
+          </button>
         </div>
       }
-    </div>
-  }
+
+      <!-- Empty state -->
+      @if (!errorMessage() && cards().length === 0) {
+        <div class="eb-empty-state">
+          <div class="eb-empty-state__icon">💳</div>
+          <h2>You don’t have any cards yet</h2>
+          <p>
+            Once you request and activate a card, it will appear here with its limit and usage.
+          </p>
+        </div>
+      }
+
+      <!-- Cards content -->
+      @if (!errorMessage() && cards().length > 0) {
+        <div class="eb-cards-layout">
+          <!-- Summary -->
+          <aside class="eb-cards-summary">
+            <h2>Card summary</h2>
+
+            <div class="eb-cards-summary__metric">
+              <span class="label">Total credit limit</span>
+              <span class="value">
+                {{ totalCreditLimit() | currency : 'USD' : 'symbol' : '1.0-0' }}
+              </span>
+            </div>
+
+            <div class="eb-cards-summary__metric">
+              <span class="label">Total available</span>
+              <span class="value value--positive">
+                {{ totalAvailable() | currency : 'USD' : 'symbol' : '1.0-0' }}
+              </span>
+            </div>
+
+            <p class="hint">
+              For the best credit score, keeping utilization below 30% is generally recommended.
+            </p>
+          </aside>
+
+          <!-- Cards list -->
+          <section class="eb-cards-list">
+            <header class="eb-cards-list__header">
+              <h2>My cards</h2>
+              <p>Tap into each card to see its limit and usage at a glance.</p>
+            </header>
+
+            <div class="eb-cards-grid">
+              @for (card of cards(); track card.cardId) {
+                <article class="eb-card-item">
+                  <!-- Visual plastic -->
+                  <div
+                    class="eb-card-visual"
+                    [class.eb-card-visual--high]="isHighUtilization(card)"
+                    [class.eb-card-visual--low]="isLowUtilization(card)"
+                  >
+                    <div class="eb-card-visual__top">
+                      <span class="eb-card-visual__label">
+                        {{ card.cardType }}
+                      </span>
+                      <span class="eb-card-visual__chip"></span>
+                    </div>
+
+                    <div class="eb-card-visual__number">
+                      {{ maskedCardNumber(card) }}
+                    </div>
+
+                    <div class="eb-card-visual__bottom">
+                      <div class="eb-card-visual__meta">
+                        <span class="meta-label">Limit</span>
+                        <span class="meta-value">
+                          {{ card.totalLimit | currency : 'USD' : 'symbol' : '1.0-0' }}
+                        </span>
+                      </div>
+                      <div class="eb-card-visual__brand">
+                        EASYBANK
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Details -->
+                  <div class="eb-card-details">
+                    <div class="detail-row">
+                      <span class="label">Total limit</span>
+                      <span class="value">
+                        {{ card.totalLimit | currency : 'USD' : 'symbol' : '1.0-0' }}
+                      </span>
+                    </div>
+
+                    <div class="detail-row">
+                      <span class="label">Amount used</span>
+                      <span class="value value--used">
+                        {{ card.amountUsed | currency : 'USD' : 'symbol' : '1.0-0' }}
+                      </span>
+                    </div>
+
+                    <div class="detail-row">
+                      <span class="label">Available</span>
+                      <span class="value value--available">
+                        {{ card.availableAmount | currency : 'USD' : 'symbol' : '1.0-0' }}
+                      </span>
+                    </div>
+
+                    <div class="utilization-row">
+                      <div class="utilization-header">
+                        <span>Utilization</span>
+                        <span
+                          class="utilization-value"
+                          [class.utilization-value--high]="isHighUtilization(card)"
+                          [class.utilization-value--low]="isLowUtilization(card)"
+                        >
+                          {{ utilizationPercent(card) | number : '1.0-0' }}%
+                        </span>
+                      </div>
+                      <div class="progress-bar">
+                        <div
+                          class="progress"
+                          [style.width.%]="utilizationPercent(card)"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+          </section>
+        </div>
+      }
+    }
+  </section>
 </div>

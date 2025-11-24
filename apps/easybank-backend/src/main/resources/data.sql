@@ -4,10 +4,10 @@
 INSERT INTO customers (
   name, email, mobile_number, password, create_dt
 ) VALUES
-    ('Alice Adams',   'alice.adams@example.com',   '702-555-0100', '{noop}password1', '2025-10-01'),
-    ('Bob Brown',     'bob.brown@example.com',     '702-555-0101', '{noop}password2', '2025-10-02'),
-    ('Charlie Carter','charlie.carter@example.com','702-555-0102', '{noop}password3', '2025-10-03'),
-    ('Diana Dawson',  'diana.dawson@example.com',  '702-555-0103', '{noop}password4', '2025-10-04'),
+    ('Alice Adams',   'alice.adams@example.com',   '702-555-0100', '{noop}password', '2025-10-01'),
+    ('Bob Brown',     'bob.brown@example.com',     '702-555-0101', '{noop}password', '2025-10-02'),
+    ('Charlie Carter','charlie.carter@example.com','702-555-0102', '{noop}password', '2025-10-03'),
+    ('Diana Dawson',  'diana.dawson@example.com',  '702-555-0103', '{noop}password', '2025-10-04'),
     ('Admin User',    'admin@example.com',         '702-555-0104', '{noop}adminpass', '2025-10-05');
 
 -- -------------------------

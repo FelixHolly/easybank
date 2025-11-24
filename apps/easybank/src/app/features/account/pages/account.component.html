@@ -1,61 +1,160 @@
-<div class="page-container">
-  <h1>My Account</h1>
+<app-nav/>
 
-  @if (isLoading()) {
-    <p>Loading account details...</p>
-  } @else if (errorMessage()) {
-    <div class="error-message">{{ errorMessage() }}</div>
-  } @else if (account()) {
-    <div class="account-container">
-      <div class="account-card">
-        <h2>Account Information</h2>
-        <div class="account-details">
-          <div class="detail-group">
-            <span>Account Number</span>
-            <div class="value">{{ account()!.accountNumber }}</div>
-          </div>
-          <div class="detail-group">
-            <span>Account Type</span>
-            <div class="value account-type">{{ account()!.accountType }}</div>
-          </div>
-          <div class="detail-group">
-            <span>Branch Address</span>
-            <div class="value">{{ account()!.branchAddress }}</div>
-          </div>
-          <div class="detail-group">
-            <span>Customer ID</span>
-            <div class="value">{{ account()!.customerId }}</div>
-          </div>
-          <div class="detail-group">
-            <span>Account Created</span>
-            <div class="value">{{ account()!.createDt | date: 'longDate' }}</div>
-          </div>
+<div class="eb-account-page">
+  <!-- Header -->
+  <header class="eb-account-header">
+    <div>
+      <h1>My account</h1>
+      <p>
+        View your EasyBank account details and profile information in one secure place.
+      </p>
+    </div>
+
+    <div class="eb-account-header__meta" *ngIf="currentUser() as user">
+      <div class="eb-user-chip">
+        <div class="eb-user-chip__avatar">
+          {{ getUserInitials() }}
+        </div>
+        <div class="eb-user-chip__info">
+          <span class="eb-user-chip__name">{{ user.name }}</span>
+          <span class="eb-user-chip__label">Signed in</span>
         </div>
       </div>
+    </div>
+  </header>
 
-      @if (currentUser()) {
-        <div class="profile-card">
-          <h2>Profile Information</h2>
-          <div class="profile-details">
-            <div class="detail-group">
-              <span>Name</span>
-              <div class="value">{{ currentUser()!.name }}</div>
-            </div>
-            <div class="detail-group">
-              <span>Email</span>
-              <div class="value">{{ currentUser()!.email }}</div>
-            </div>
-            <div class="detail-group">
-              <span>Mobile Number</span>
-              <div class="value">{{ currentUser()!.mobileNumber }}</div>
-            </div>
-            <div class="detail-group">
-              <span>Roles</span>
-              <div class="value role">{{ currentUser()!.roles.join(', ') }}</div>
-            </div>
+  <!-- Content -->
+  <section class="eb-account-body">
+    <!-- Loading state -->
+    @if (isLoading()) {
+      <div class="eb-account-skeleton">
+        <div class="eb-skeleton-card eb-skeleton-card--wide">
+          <div class="eb-skeleton-line eb-skeleton-line--title"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--text"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--text short"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--meta"></div>
+        </div>
+        <div class="eb-skeleton-card eb-skeleton-card--narrow">
+          <div class="eb-skeleton-line eb-skeleton-line--title"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--text"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--meta"></div>
+        </div>
+      </div>
+    } @else {
+      <!-- Error state -->
+      @if (errorMessage()) {
+        <div class="eb-alert eb-alert--error">
+          <div class="eb-alert__icon">⚠️</div>
+          <div class="eb-alert__content">
+            <h2>We couldn’t load your account</h2>
+            <p>{{ errorMessage() }}</p>
           </div>
+          <button type="button" class="btn btn--ghost" (click)="retry()">
+            Try again
+          </button>
         </div>
       }
-    </div>
-  }
+
+      <!-- Main content when account is loaded -->
+      @if (account(); as acc) {
+        <div class="eb-account-grid">
+          <!-- Account card -->
+          <article class="eb-account-card">
+            <header class="eb-account-card__header">
+              <div>
+                <span class="eb-account-card__eyebrow">
+                  Primary EasyBank account
+                </span>
+                <h2>{{ getAccountTypeLabel() }}</h2>
+              </div>
+              <span class="eb-badge eb-badge--success">Active</span>
+            </header>
+
+            <div class="eb-account-card__number">
+              <span class="label">Account number</span>
+              <div class="value">
+                {{ getMaskedAccountNumber() }}
+              </div>
+            </div>
+
+            <div class="eb-account-card__details">
+              <div class="detail-group">
+                <span class="detail-label">Account type</span>
+                <span class="detail-value">{{ acc.accountType }}</span>
+              </div>
+              <div class="detail-group">
+                <span class="detail-label">Customer ID</span>
+                <span class="detail-value">{{ acc.customerId }}</span>
+              </div>
+              <div class="detail-group">
+                <span class="detail-label">Branch address</span>
+                <span class="detail-value">{{ acc.branchAddress }}</span>
+              </div>
+              <div class="detail-group">
+                <span class="detail-label">Account created</span>
+                <span class="detail-value">
+                  {{ acc.createDt | date: 'longDate' }}
+                </span>
+              </div>
+            </div>
+
+            <footer class="eb-account-card__footer">
+              <span class="hint">
+                For security, only the last 4 digits of your account number are visible.
+              </span>
+            </footer>
+          </article>
+
+          <!-- Profile card -->
+          @if (currentUser(); as user) {
+            <aside class="eb-profile-card">
+              <header class="eb-profile-card__header">
+                <div class="eb-profile-avatar">
+                  {{ getUserInitials() }}
+                </div>
+                <div>
+                  <h2>Profile information</h2>
+                  <p>These details help us secure and personalize your account.</p>
+                </div>
+              </header>
+
+              <div class="eb-profile-card__details">
+                <div class="detail-group">
+                  <span class="detail-label">Name</span>
+                  <span class="detail-value">{{ user.name }}</span>
+                </div>
+                <div class="detail-group">
+                  <span class="detail-label">Email</span>
+                  <span class="detail-value">{{ user.email }}</span>
+                </div>
+                <div class="detail-group">
+                  <span class="detail-label">Mobile number</span>
+                  <span class="detail-value">
+                    {{ user.mobileNumber || 'Not provided' }}
+                  </span>
+                </div>
+              </div>
+
+              <footer class="eb-profile-card__footer">
+                <p>
+                  To update your personal details, please contact EasyBank support or use the
+                  profile settings in the mobile app.
+                </p>
+              </footer>
+            </aside>
+          }
+        </div>
+      } @else if (!errorMessage()) {
+        <!-- Fallback if no account data but also no explicit error -->
+        <div class="eb-empty-state">
+          <div class="eb-empty-state__icon">ℹ️</div>
+          <h2>No account data available</h2>
+          <p>
+            We couldn’t find any account information linked to your profile. If you believe this is
+            an error, please contact EasyBank support.
+          </p>
+        </div>
+      }
+    }
+  </section>
 </div>

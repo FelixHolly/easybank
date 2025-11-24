@@ -38,7 +38,7 @@ public class SecurityConfig {
       .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .authorizeHttpRequests(
         (requests) -> requests
-          .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance", "/user", "/logout").authenticated()
+          .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance", "/user", "/logout").hasRole("USER")
           .requestMatchers("/register", "/contact", "/notices", "/error").permitAll()
       )
       //global error config

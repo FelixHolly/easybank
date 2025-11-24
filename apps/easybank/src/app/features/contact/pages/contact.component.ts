@@ -42,18 +42,22 @@ export class ContactComponent {
 
     const contactRequest: ContactRequestDto = this.contactForm.value;
 
-    this.apiService.post<ContactResponseDto>(API_CONFIG.endpoints.contact, contactRequest).subscribe({
-      next: (response) => {
-        this.isLoading.set(false);
-        this.successMessage.set(`Your inquiry has been submitted with reference ID: ${response.contactId}`);
-        this.contactForm.reset();
-      },
-      error: (error) => {
-        this.isLoading.set(false);
-        this.errorMessage.set('Failed to submit your message. Please try again later.');
-        console.error('Error submitting contact form:', error);
-      }
-    });
+    this.apiService
+      .post<ContactResponseDto>(API_CONFIG.endpoints.contact, contactRequest)
+      .subscribe({
+        next: (response) => {
+          this.isLoading.set(false);
+          this.successMessage.set(
+            `Your inquiry has been submitted with reference ID: ${response.contactId}`
+          );
+          this.contactForm.reset();
+        },
+        error: (error) => {
+          this.isLoading.set(false);
+          this.errorMessage.set('Failed to submit your message. Please try again later.');
+          console.error('Error submitting contact form:', error);
+        },
+      });
   }
 
   resetForm(): void {

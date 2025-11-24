@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard } from './core';
+import { authGuard } from './core/guards/auth.guard';
 
 export const appRoutes: Routes = [
   // Default redirect to home
@@ -28,6 +28,7 @@ export const appRoutes: Routes = [
   {
     path: '',
     canActivate: [authGuard],
+    data: { roles: ['USER'] },
     children: [
       // Dashboard (user home after login)
       {
@@ -41,6 +42,7 @@ export const appRoutes: Routes = [
       // Account feature
       {
         path: 'account',
+        data: { roles: ['USER'] },
         loadComponent: () =>
           import('./features/account/pages/account.component').then(
             (m) => m.AccountComponent
@@ -51,6 +53,7 @@ export const appRoutes: Routes = [
       // Balance feature
       {
         path: 'balance',
+        data: { roles: ['USER'] },
         loadComponent: () =>
           import('./features/balance/pages/balance.component').then(
             (m) => m.BalanceComponent
@@ -61,6 +64,7 @@ export const appRoutes: Routes = [
       // Loans feature
       {
         path: 'loans',
+        data: { roles: ['USER'] },
         loadComponent: () =>
           import('./features/loans/pages/loans.component').then(
             (m) => m.LoansComponent
@@ -71,6 +75,7 @@ export const appRoutes: Routes = [
       // Cards feature
       {
         path: 'cards',
+        data: { roles: ['USER'] },
         loadComponent: () =>
           import('./features/cards/pages/cards.component').then(
             (m) => m.CardsComponent

@@ -1,100 +1,199 @@
-import { inject, Injectable, signal } from '@angular/core';
-import { Router } from '@angular/router';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import { ApiService } from '../../../core';
-import { StorageService } from '../../../core';
-import { API_CONFIG } from '../../../config';
-import { APP_CONSTANTS } from '../../../config';
-import { User, LoginCredentials, RegisterData } from '../../../core';
+import {effect, inject, Injectable, signal} from '@angular/core';
+import {Router} from '@angular/router';
+import {Observable} from 'rxjs';
+import {ApiService, LoggerService, RegisterData, User} from '../../../core';
+import {API_CONFIG} from '../../../config';
+import Keycloak from "keycloak-js";
+import {KEYCLOAK_EVENT_SIGNAL, KeycloakEventType, ReadyArgs, typeEventArgs} from 'keycloak-angular';
 
 /**
  * Auth Service
- * Handles session-based authentication with HTTP Basic Auth
+ * Handles Keycloak-based authentication with JWT tokens
  */
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private api = inject(ApiService);
-  private http = inject(HttpClient);
-  private storage = inject(StorageService);
   private router = inject(Router);
+  private logger = inject(LoggerService);
+  private readonly keycloak = inject(Keycloak);
+  private readonly keycloakEventSignal = inject(KEYCLOAK_EVENT_SIGNAL);
+
+  // Signal for reactive authentication state
+  private authenticatedSignal = signal<boolean>(false);
+  readonly authenticated = this.authenticatedSignal.asReadonly();
 
   // Signal for reactive current user state
-  private currentUserSignal = signal<User | null>(this.storage.getItem<User>(APP_CONSTANTS.storageKeys.user));
-
-  // Public readonly signal
+  private currentUserSignal = signal<User | null>(null);
   readonly currentUser = this.currentUserSignal.asReadonly();
 
-  /**
-   * Login with credentials using HTTP Basic Auth
-   */
-  login(credentials: LoginCredentials): Observable<User> {
-    // Create Basic Auth header
-    const basicAuth = btoa(`${credentials.email}:${credentials.password}`);
-    const headers = new HttpHeaders({
-      'Authorization': `Basic ${basicAuth}`
-    });
+  constructor() {
+    this.logger.auth('AuthService initialized');
 
-    // Call /user endpoint with Basic Auth to authenticate and get user details
-    return this.http.get<User>(
-      `${API_CONFIG.baseUrl}${API_CONFIG.endpoints.auth.user}`,
-      {
-        headers,
-        withCredentials: true
+    // React to Keycloak events using Signals
+    effect(() => {
+      const event = this.keycloakEventSignal();
+      this.logger.keycloak(`Event received: ${event.type}`, event.args);
+
+      if (event.type === KeycloakEventType.Ready) {
+        const isAuthenticated = typeEventArgs<ReadyArgs>(event.args);
+        this.logger.keycloak(`Keycloak Ready - Authenticated: ${isAuthenticated}`);
+        this.authenticatedSignal.set(isAuthenticated);
+
+        if (isAuthenticated) {
+          this.logger.auth('User is authenticated, loading profile');
+          this.loadUserProfile();
+        } else {
+          this.logger.auth('User is not authenticated');
+        }
       }
-    ).pipe(
-      tap((user) => {
-        this.setCurrentUser(user);
-      })
-    );
+
+      if (event.type === KeycloakEventType.AuthSuccess) {
+        this.logger.success('Authentication successful!');
+        this.authenticatedSignal.set(true);
+        this.loadUserProfile();
+      }
+
+      if (event.type === KeycloakEventType.AuthLogout) {
+        this.logger.auth('User logged out');
+        this.authenticatedSignal.set(false);
+        this.currentUserSignal.set(null);
+      }
+
+      if (event.type === KeycloakEventType.AuthRefreshError ||
+          event.type === KeycloakEventType.AuthError) {
+        this.logger.error(`Authentication error: ${event.type}`, event.args);
+        this.authenticatedSignal.set(false);
+        this.currentUserSignal.set(null);
+      }
+
+      if (event.type === KeycloakEventType.AuthRefreshSuccess) {
+        this.logger.debug('Token refreshed successfully');
+      }
+
+      if (event.type === KeycloakEventType.TokenExpired) {
+        this.logger.warn('Token expired, attempting refresh');
+      }
+    });
   }
 
   /**
-   * Register new user
+   * Login via Keycloak
+   */
+  async login(redirectUri?: string): Promise<void> {
+    const redirect = redirectUri || window.location.origin + '/dashboard';
+    this.logger.auth(`Initiating Keycloak login with redirect: ${redirect}`);
+
+    try {
+      await this.keycloak.login({
+        redirectUri: redirect
+      });
+    } catch (error) {
+      this.logger.error('Login failed', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Logout current user via Keycloak
+   */
+  async logout(redirectUri?: string): Promise<void> {
+    const redirect = redirectUri || "http://localhost:4200/home";
+    this.logger.auth(`Logging out, redirecting to: ${redirect}`);
+
+    try {
+      await this.keycloak.logout({
+        redirectUri: redirect
+      });
+    } catch (error) {
+      this.logger.error('Logout failed', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Register new user (still uses backend API)
    */
   register(credentials: RegisterData): Observable<string> {
     return this.api.post<string>(API_CONFIG.endpoints.auth.register, credentials);
   }
 
   /**
-   * Logout current user
-   */
-  logout(): Observable<string> {
-    return this.api.post<string>(API_CONFIG.endpoints.auth.logout, {}).pipe(
-      tap(() => {
-        // Clear user data
-        this.storage.removeItem(APP_CONSTANTS.storageKeys.user);
-
-        // Reset user signal
-        this.currentUserSignal.set(null);
-
-        // Navigate to login
-        this.router.navigate(['/auth/login']);
-      })
-    );
-  }
-
-  /**
-   * Check if user is authenticated
+   * Check if user is authenticated via Keycloak
    */
   isAuthenticated(): boolean {
-    return this.storage.hasItem(APP_CONSTANTS.storageKeys.user);
+    return this.keycloak.authenticated ?? false;
   }
 
   /**
-   * Get current user from storage
+   * Get user email from Keycloak token
+   */
+  getUserEmail(): string | undefined {
+    return this.keycloak.tokenParsed?.['email'] as string | undefined;
+  }
+
+  /**
+   * Get username from Keycloak token
+   */
+  getUsername(): string | undefined {
+    return this.keycloak.tokenParsed?.['preferred_username'] as string | undefined;
+  }
+
+  /**
+   * Get user roles from Keycloak token
+   */
+  getUserRoles(): string[] {
+    return this.keycloak.tokenParsed?.['realm_access']?.['roles'] || [];
+  }
+
+  /**
+   * Check if user has a specific role
+   */
+  hasRole(role: string): boolean {
+    return this.keycloak.hasRealmRole(role);
+  }
+
+  /**
+   * Get current access token
+   */
+  getToken(): string | undefined {
+    return this.keycloak.token;
+  }
+
+  /**
+   * Load user profile from Keycloak
+   */
+  private async loadUserProfile(): Promise<void> {
+    this.logger.debug('Loading user profile from Keycloak...');
+
+    try {
+      const profile = await this.keycloak.loadUserProfile();
+      this.logger.debug('Keycloak profile loaded:', profile);
+
+      const roles = this.getUserRoles();
+      this.logger.debug('User roles:', roles);
+
+      const user: User = {
+        email: profile.email || '',
+        name: profile.firstName && profile.lastName
+          ? `${profile.firstName} ${profile.lastName}`
+          : profile.username || '',
+        role: roles[0] || 'USER'
+      };
+
+      this.logger.success('User profile loaded:', user);
+      this.currentUserSignal.set(user);
+    } catch (error) {
+      this.logger.error('Failed to load user profile', error);
+      this.currentUserSignal.set(null);
+    }
+  }
+
+  /**
+   * Get current user
    */
   getCurrentUser(): User | null {
-    return this.storage.getItem<User>(APP_CONSTANTS.storageKeys.user);
-  }
-
-  /**
-   * Store user profile
-   */
-  setCurrentUser(user: User): void {
-    this.storage.setItem(APP_CONSTANTS.storageKeys.user, user);
-    this.currentUserSignal.set(user);
+    return this.currentUserSignal();
   }
 }

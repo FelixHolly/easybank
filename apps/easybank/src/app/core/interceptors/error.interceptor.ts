@@ -30,7 +30,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         switch (error.status) {
           case 401:
             // Unauthorized - redirect to login
-            router.navigate(['/auth/login']);
+            router.navigate(['/home']);
             break;
           case 403:
             // Forbidden

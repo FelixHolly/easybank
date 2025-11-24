@@ -1,58 +1,173 @@
-<div class="dashboard-container">
-  <header class="dashboard-header">
-    <h1>Welcome back!</h1>
-    <p>Here's your account overview</p>
+<app-nav/>
+
+<div class="eb-dashboard">
+  <!-- Header / Hero -->
+  <header class="eb-dashboard-header">
+    <div>
+      <h1>Welcome back to EasyBank</h1>
+      <p>
+        Here’s a quick overview of your balance, cards, and recent activity.
+      </p>
+    </div>
+    <div class="eb-dashboard-header__meta">
+      <span class="eb-pill">Secure dashboard</span>
+    </div>
   </header>
 
-  <div class="dashboard-grid">
-    <!-- Account Summary Cards -->
-    <section class="summary-cards">
-      <div class="card">
-        <h3>Balance</h3>
-        <p class="amount">{{ accountSummary.balance | currency }}</p>
-        <a routerLink="/balance">View Details</a>
-      </div>
-
-      <div class="card">
-        <h3>Loans</h3>
-        <p class="amount">{{ accountSummary.totalLoans }}</p>
-        <a routerLink="/loans">Manage Loans</a>
-      </div>
-
-      <div class="card">
-        <h3>Cards</h3>
-        <p class="amount">{{ accountSummary.activeCards }}</p>
-        <a routerLink="/cards">View Cards</a>
-      </div>
-    </section>
-
-    <!-- Recent Transactions -->
-    <section class="recent-transactions">
-      <h2>Recent Transactions</h2>
-      <div class="transactions-list">
-        @if (recentTransactions.length === 0) {
-          <p>No recent transactions</p>
-        } @else {
-          @for (transaction of recentTransactions; track transaction.id) {
-            <div class="transaction-item">
-              <!-- Transaction details -->
+  <!-- Content -->
+  <section class="eb-dashboard-content">
+    <!-- Loading state -->
+    @if (isLoading()) {
+      <div class="eb-dashboard-skeleton">
+        <div class="eb-skeleton-bar">
+          <div class="eb-skeleton-line eb-skeleton-line--title"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--text"></div>
+        </div>
+        <div class="eb-skeleton-grid">
+          @for (_ of [1, 2, 3]; track _;) {
+            <div class="eb-skeleton-card">
+              <div class="eb-skeleton-line eb-skeleton-line--title"></div>
+              <div class="eb-skeleton-line eb-skeleton-line--text"></div>
+              <div class="eb-skeleton-line eb-skeleton-line--meta"></div>
             </div>
           }
-        }
+        </div>
       </div>
-    </section>
+    } @else {
+      <!-- Error -->
+      @if (errorMessage()) {
+        <div class="eb-alert eb-alert--error">
+          <div class="eb-alert__icon">⚠️</div>
+          <div class="eb-alert__content">
+            <h2>We couldn’t load your overview</h2>
+            <p>{{ errorMessage() }}</p>
+          </div>
+        </div>
+      }
 
-    <!-- Quick Actions -->
-    <section class="quick-actions">
-      <h2>Quick Actions</h2>
-      <div class="actions-grid">
-        <a routerLink="/account" class="action-btn">
-          <span>My Account</span>
-        </a>
-        <a routerLink="/contact" class="action-btn">
-          <span>Contact Support</span>
-        </a>
+      <!-- Main Dashboard -->
+      <div class="eb-dashboard-grid">
+        <!-- Summary cards -->
+        <section class="eb-summary">
+          <article class="eb-summary-card eb-summary-card--balance">
+            <header>
+              <span class="eyebrow">Current balance</span>
+              <h2>
+                {{ summary().balance | currency : 'USD' : 'symbol' : '1.2-2' }}
+              </h2>
+            </header>
+            <p>Available funds in your primary EasyBank account.</p>
+            <a routerLink="/balance" class="eb-link">View transactions</a>
+          </article>
+
+          <article class="eb-summary-card eb-summary-card--loans">
+            <header>
+              <span class="eyebrow">Active loans</span>
+              <h2>{{ summary().totalLoans }}</h2>
+            </header>
+            <p>Stay on top of your loans and repayment schedules.</p>
+            <a routerLink="/loans" class="eb-link">Manage loans</a>
+          </article>
+
+          <article class="eb-summary-card eb-summary-card--cards">
+            <header>
+              <span class="eyebrow">Active cards</span>
+              <h2>{{ summary().activeCards }}</h2>
+            </header>
+            <p>Monitor your EasyBank credit and debit cards.</p>
+            <a routerLink="/cards" class="eb-link">View cards</a>
+          </article>
+        </section>
+
+        <!-- Recent transactions -->
+        <section class="eb-panel eb-panel--transactions">
+          <header class="eb-panel__header">
+            <div>
+              <h2>Recent activity</h2>
+              <p>Last few transactions on your account.</p>
+            </div>
+            <a routerLink="/balance" class="eb-link eb-link--subtle">
+              See all
+            </a>
+          </header>
+
+          <div class="eb-panel__body">
+            @if (recentTransactions().length === 0) {
+              <div class="eb-empty-state">
+                <div class="eb-empty-state__icon">📭</div>
+                <h3>No recent transactions</h3>
+                <p>
+                  When you start using your EasyBank account, your latest activity will appear here.
+                </p>
+              </div>
+            } @else {
+              <div class="eb-tx-list">
+                @for (transaction of recentTransactions(); track transaction.id) {
+                  <article
+                    class="eb-tx-item"
+                    [class.eb-tx-item--credit]="isCredit(transaction)"
+                    [class.eb-tx-item--debit]="isDebit(transaction)"
+                  >
+                    <div class="eb-tx-main">
+                      <div class="eb-tx-summary">
+                        <div class="title">
+                          {{ transaction.summary }}
+                        </div>
+                        <div class="meta">
+                          {{ transaction.date | date : 'MMM d, y' }}
+                          · ID: {{ transaction.id }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="eb-tx-amount">
+                      <div
+                        class="amount"
+                        [class.amount--positive]="isCredit(transaction)"
+                        [class.amount--negative]="isDebit(transaction)"
+                      >
+                        {{ isCredit(transaction) ? '+' : '-' }}
+                        {{ transaction.amount | currency : 'USD' : 'symbol' : '1.2-2' }}
+                      </div>
+                      <div class="type-label">
+                        {{ transaction.type }}
+                      </div>
+                    </div>
+                  </article>
+                }
+              </div>
+            }
+          </div>
+        </section>
+
+        <!-- Quick actions -->
+        <section class="eb-panel eb-panel--actions">
+          <header class="eb-panel__header">
+            <div>
+              <h2>Quick actions</h2>
+              <p>Access the most common sections in just one click.</p>
+            </div>
+          </header>
+
+          <div class="eb-panel__body">
+            <div class="eb-actions-grid">
+              <a routerLink="/account" class="eb-action-tile">
+                <div class="icon">👤</div>
+                <div class="content">
+                  <h3>My account</h3>
+                  <p>View your profile and account information.</p>
+                </div>
+              </a>
+              <a routerLink="/contact" class="eb-action-tile">
+                <div class="icon">💬</div>
+                <div class="content">
+                  <h3>Contact support</h3>
+                  <p>Get help from the EasyBank support team.</p>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
       </div>
-    </section>
-  </div>
+    }
+  </section>
 </div>

@@ -1,104 +1,326 @@
-<!-- Navigation Header -->
-<nav class="navbar">
-  <div class="nav-container">
-    <a routerLink="/home" class="logo">
-      <span class="logo-text">EasyBank</span>
-    </a>
+<div class="eb-page">
+  <!-- Top Navigation -->
+  <nav class="eb-nav">
+    <div class="eb-nav__inner">
+      <a routerLink="/home" class="eb-nav__brand">
+        <div class="eb-logo">
+          <span class="eb-logo__icon">EB</span>
+          <div class="eb-logo__text">
+            <span class="eb-logo__title">EasyBank</span>
+            <span class="eb-logo__subtitle">Digital Banking</span>
+          </div>
+        </div>
+      </a>
 
-    <ul class="nav-links">
-      <li><a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Home</a></li>
-      <li><a routerLink="/contact" routerLinkActive="active">Contact Us</a></li>
-      <li><a routerLink="/notices" routerLinkActive="active">Notices</a></li>
-      <li><a routerLink="/auth/login" class="btn-login">Login</a></li>
-    </ul>
-  </div>
-</nav>
+      <ul class="eb-nav__links">
+        <li>
+          <a
+            routerLink="/home"
+            routerLinkActive="is-active"
+            [routerLinkActiveOptions]="{ exact: true }"
+          >
+            Home
+          </a>
+        </li>
+        <li><a routerLink="/notices" routerLinkActive="is-active">Notices</a></li>
+        <li><a routerLink="/contact" routerLinkActive="is-active">Contact</a></li>
+      </ul>
 
-<!-- Main Content -->
-<div class="home-container">
-  <header class="hero">
-    <h1>Welcome to EasyBank</h1>
-    <p>Your trusted banking partner</p>
-    <div class="cta-buttons">
-      <a routerLink="/auth/login" class="btn btn-primary">Login</a>
-      <a routerLink="/auth/register" class="btn btn-secondary">Sign Up</a>
+      <div class="eb-nav__actions">
+        <button type="button" class="btn btn--ghost" (click)="onLogin()">Log in</button>
+        <a routerLink="/auth/register" class="btn btn--primary">Open account</a>
+      </div>
+
+      <!-- Mobile toggle (visual only – add logic if needed) -->
+      <button class="eb-nav__menu-toggle" type="button" aria-label="Toggle navigation">
+        <span></span><span></span>
+      </button>
     </div>
-  </header>
+  </nav>
 
-  <section class="features">
-    <h2>Our Services</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">💳</div>
-        <h3>Cards</h3>
-        <p>Manage your credit and debit cards with ease</p>
+  <!-- Main Content -->
+  <main class="eb-main">
+    <!-- Hero -->
+    <section class="eb-hero">
+      <div class="eb-hero__content">
+        <div class="eb-hero__eyebrow">Welcome to the future of banking</div>
+        <h1 class="eb-hero__title">
+          Everyday banking,
+          <span>beautifully simple.</span>
+        </h1>
+        <p class="eb-hero__subtitle">
+          Open a fully digital EasyBank account in minutes. Track your money in real time,
+          move funds instantly, and stay in full control – wherever you are.
+        </p>
+
+        <div class="eb-hero__cta">
+          <a routerLink="/auth/register" class="btn btn--primary btn--lg">
+            Get started in minutes
+          </a>
+          <button type="button" class="btn btn--ghost btn--lg" (click)="onLogin()">
+            I already have an account
+          </button>
+        </div>
+
+        <div class="eb-hero__meta">
+          <div class="eb-hero__stat">
+            <span class="eb-hero__stat-value">24/7</span>
+            <span class="eb-hero__stat-label">Fraud monitoring</span>
+          </div>
+          <div class="eb-hero__stat">
+            <span class="eb-hero__stat-value">3M+</span>
+            <span class="eb-hero__stat-label">Accounts secured</span>
+          </div>
+          <div class="eb-hero__stat">
+            <span class="eb-hero__stat-value">0€</span>
+            <span class="eb-hero__stat-label">Account opening fees</span>
+          </div>
+        </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">💰</div>
-        <h3>Balance</h3>
-        <p>Track your account balance in real-time</p>
+
+      <!-- Hero Mockup Card -->
+      <div class="eb-hero__mockup">
+        <div class="eb-card eb-card--primary">
+          <div class="eb-card__top">
+            <span class="eb-card__label">EasyBank Platinum</span>
+            <span class="eb-card__chip"></span>
+          </div>
+          <div class="eb-card__number">5164 •• •• 2891</div>
+          <div class="eb-card__bottom">
+            <div>
+              <div class="eb-card__holder">FELIX HOLLNDONNER</div>
+              <div class="eb-card__meta">VALID THRU 12/28</div>
+            </div>
+            <div class="eb-card__brand">VISA</div>
+          </div>
+        </div>
+
+        <div class="eb-account-card">
+          <div class="eb-account-card__header">
+            <span>Everyday Account</span>
+            <span class="eb-badge eb-badge--success">Live</span>
+          </div>
+          <div class="eb-account-card__balance">
+            <span>Current balance</span>
+            <h3>€8,542.21</h3>
+          </div>
+          <div class="eb-account-card__rows">
+            <div class="eb-account-row">
+              <span>Available to spend</span>
+              <span>€6,120.00</span>
+            </div>
+            <div class="eb-account-row">
+              <span>Upcoming bills</span>
+              <span class="text--warning">€1,420.50</span>
+            </div>
+            <div class="eb-account-row">
+              <span>Savings this month</span>
+              <span class="text--success">+€325.80</span>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">🏦</div>
-        <h3>Loans</h3>
-        <p>Apply for personal and business loans</p>
+    </section>
+
+    <!-- Features -->
+    <section class="eb-section eb-section--light" id="features">
+      <div class="eb-section__header">
+        <h2>Everything you expect from a modern bank.</h2>
+        <p>
+          EasyBank gives you powerful tools to manage your money – without the complexity.
+        </p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">📊</div>
-        <h3>Reports</h3>
-        <p>Detailed financial reports and analytics</p>
+
+      <div class="eb-grid eb-grid--4">
+        <article class="eb-feature">
+          <div class="eb-feature__icon eb-feature__icon--primary">💳</div>
+          <h3>Smart cards</h3>
+          <p>
+            Virtual and physical cards with instant freeze, spending limits, and real-time alerts.
+          </p>
+        </article>
+
+        <article class="eb-feature">
+          <div class="eb-feature__icon eb-feature__icon--secondary">📱</div>
+          <h3>Real-time overview</h3>
+          <p>
+            See every transaction the moment it happens, on web and mobile.
+          </p>
+        </article>
+
+        <article class="eb-feature">
+          <div class="eb-feature__icon eb-feature__icon--accent">🏦</div>
+          <h3>Flexible loans</h3>
+          <p>
+            Transparent credit and loan options with instant pre-approval decisions.
+          </p>
+        </article>
+
+        <article class="eb-feature">
+          <div class="eb-feature__icon eb-feature__icon--muted">📊</div>
+          <h3>Insights & reports</h3>
+          <p>
+            Automatic categorization, budgets, and reports that make sense at a glance.
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Security strip -->
+    <section class="eb-strip">
+      <div class="eb-strip__content">
+        <div>
+          <h2>Built with security at the core.</h2>
+          <p>
+            We use industry-standard 256-bit encryption, device binding, and real-time fraud detection
+            to keep your money and data safe.
+          </p>
+        </div>
+        <ul class="eb-strip__highlights">
+          <li>🔒 Strong customer authentication</li>
+          <li>🧠 AI-powered fraud monitoring</li>
+          <li>✅ Fully PSD2 compliant</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="eb-section">
+      <div class="eb-section__header">
+        <h2>Open your account in three simple steps.</h2>
+        <p>No branch visits. No paperwork. Just your ID and a few minutes.</p>
+      </div>
+
+      <div class="eb-steps">
+        <div class="eb-step">
+          <div class="eb-step__circle">1</div>
+          <h3>Tell us about yourself</h3>
+          <p>Fill in your basic details so we can verify your identity.</p>
+        </div>
+        <div class="eb-step">
+          <div class="eb-step__circle">2</div>
+          <h3>Verify your identity</h3>
+          <p>Secure ID verification directly in the app or browser.</p>
+        </div>
+        <div class="eb-step">
+          <div class="eb-step__circle">3</div>
+          <h3>Start banking instantly</h3>
+          <p>Get your virtual card right away and a physical card in the mail.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="eb-section eb-section--light">
+      <div class="eb-section__header">
+        <h2>Loved by customers across the globe.</h2>
+        <p>People use EasyBank to keep their money organized and under control.</p>
+      </div>
+
+      <div class="eb-grid eb-grid--3">
+        <article class="eb-testimonial">
+          <p class="eb-testimonial__quote">
+            “Switching to EasyBank felt like switching from dial-up to fiber. Everything is instant.”
+          </p>
+          <div class="eb-testimonial__author">
+            <span class="eb-testimonial__name">Sophie A.</span>
+            <span class="eb-testimonial__role">Freelance Designer</span>
+          </div>
+        </article>
+
+        <article class="eb-testimonial">
+          <p class="eb-testimonial__quote">
+            “I can see exactly where my business expenses go without needing an accountant.”
+          </p>
+          <div class="eb-testimonial__author">
+            <span class="eb-testimonial__name">Marcus L.</span>
+            <span class="eb-testimonial__role">Small Business Owner</span>
+          </div>
+        </article>
+
+        <article class="eb-testimonial">
+          <p class="eb-testimonial__quote">
+            “The security and alerts make me feel safe using my card anywhere in the world.”
+          </p>
+          <div class="eb-testimonial__author">
+            <span class="eb-testimonial__name">Nadia R.</span>
+            <span class="eb-testimonial__role">Remote Engineer</span>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Call to action -->
+    <section class="eb-cta">
+      <div class="eb-cta__inner">
+        <div>
+          <h2>Ready to make banking feel effortless?</h2>
+          <p>
+            Create your EasyBank account in just a few minutes and experience modern banking the way it should be.
+          </p>
+        </div>
+        <div class="eb-cta__actions">
+          <a routerLink="/auth/register" class="btn btn--primary btn--lg">
+            Open my EasyBank account
+          </a>
+          <button type="button" class="btn btn--ghost btn--lg" (click)="onLogin()">
+            Log in to existing account
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="eb-footer">
+    <div class="eb-footer__top">
+      <div class="eb-footer__brand">
+        <div class="eb-logo">
+          <span class="eb-logo__icon">EB</span>
+          <div class="eb-logo__text">
+            <span class="eb-logo__title">EasyBank</span>
+            <span class="eb-logo__subtitle">Digital Banking</span>
+          </div>
+        </div>
+        <p>
+          EasyBank is your modern digital bank – combining powerful tools with a human touch.
+        </p>
+      </div>
+
+      <div class="eb-footer__columns">
+        <div class="eb-footer__column">
+          <h4>Product</h4>
+          <ul>
+            <li><a routerLink="/home">Personal accounts</a></li>
+            <li><a routerLink="/home">Business accounts</a></li>
+            <li><a routerLink="/home">Cards & payments</a></li>
+            <li><a routerLink="/home">Loans</a></li>
+          </ul>
+        </div>
+        <div class="eb-footer__column">
+          <h4>Company</h4>
+          <ul>
+            <li><a routerLink="/notices">Notices</a></li>
+            <li><a routerLink="/contact">Contact</a></li>
+            <li><a href="#">Careers</a></li>
+          </ul>
+        </div>
+        <div class="eb-footer__column">
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="#">Terms &amp; Conditions</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+          </ul>
+        </div>
       </div>
     </div>
-  </section>
 
-  <section class="about">
-    <h2>Why Choose EasyBank?</h2>
-    <div class="about-content">
-      <div class="about-item">
-        <h3>🔒 Secure</h3>
-        <p>Bank-level security with 256-bit encryption</p>
-      </div>
-      <div class="about-item">
-        <h3>⚡ Fast</h3>
-        <p>Lightning-fast transactions and instant updates</p>
-      </div>
-      <div class="about-item">
-        <h3>🌍 Global</h3>
-        <p>Access your account anywhere in the world</p>
-      </div>
-      <div class="about-item">
-        <h3>📱 Mobile</h3>
-        <p>Full mobile app support for iOS and Android</p>
-      </div>
+    <div class="eb-footer__bottom">
+      <span>&copy; 2024 EasyBank. All rights reserved.</span>
+      <span class="eb-footer__bottom-meta">
+        EasyBank is an example application and not a real bank.
+      </span>
     </div>
-  </section>
+  </footer>
 </div>
-
-<!-- Footer -->
-<footer class="footer">
-  <div class="footer-content">
-    <div class="footer-section">
-      <h4>EasyBank</h4>
-      <p>Your trusted banking partner since 2024</p>
-    </div>
-    <div class="footer-section">
-      <h4>Quick Links</h4>
-      <ul>
-        <li><a routerLink="/home">Home</a></li>
-        <li><a routerLink="/contact">Contact Us</a></li>
-        <li><a routerLink="/notices">Notices</a></li>
-      </ul>
-    </div>
-    <div class="footer-section">
-      <h4>Legal</h4>
-      <ul>
-        <li><a href="#">Terms & Conditions</a></li>
-        <li><a href="#">Privacy Policy</a></li>
-        <li><a href="#">Cookie Policy</a></li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>&copy; 2024 EasyBank. All rights reserved.</p>
-  </div>
-</footer>

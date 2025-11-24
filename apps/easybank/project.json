@@ -15,6 +15,10 @@
         "polyfills": ["zone.js"],
         "tsConfig": "apps/easybank/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
+        "allowedCommonJsDependencies": [
+          "base64-js",
+          "js-sha256"
+        ],
         "assets": [
           {
             "glob": "**/*",

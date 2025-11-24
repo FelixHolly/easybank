@@ -1,0 +1,92 @@
+<div class="eb-notices-page">
+  <!-- Header -->
+  <header class="eb-notices-header">
+    <div>
+      <h1>System notices &amp; maintenance</h1>
+      <p>
+        Stay informed about planned maintenance, service interruptions, and important updates to your
+        EasyBank account.
+      </p>
+    </div>
+    <div class="eb-notices-header__meta">
+      <span class="eb-pill">Status center</span>
+    </div>
+  </header>
+
+  <section class="eb-notices-content">
+    <!-- Loading state -->
+    <ng-container *ngIf="service.loading$()">
+      <div class="eb-notices-skeleton">
+        <div class="eb-skeleton-card" *ngFor="let _ of [1, 2, 3]">
+          <div class="eb-skeleton-line eb-skeleton-line--title"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--text"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--text short"></div>
+          <div class="eb-skeleton-line eb-skeleton-line--meta"></div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Error state -->
+    <div *ngIf="!service.loading$() && service.error$()" class="eb-alert eb-alert--error">
+      <div class="eb-alert__icon">⚠️</div>
+      <div class="eb-alert__content">
+        <h2>We couldn’t load the latest notices</h2>
+        <p>{{ service.error$() }}</p>
+      </div>
+      <button type="button" class="btn btn--ghost" (click)="service.loadNotices()">
+        Try again
+      </button>
+    </div>
+
+    <!-- Notices list + empty state -->
+    <ng-container *ngIf="!service.loading$() && !service.error$()">
+      <!-- List of notices -->
+      <div *ngIf="service.notices$().length > 0; else noNotices" class="eb-notices-list">
+        <article
+          class="eb-notice-card"
+          *ngFor="let notice of service.notices$()"
+          [ngClass]="'eb-notice-card--' + getStatus(notice)"
+        >
+          <header class="eb-notice-card__header">
+            <div class="eb-notice-card__title-block">
+              <h2>{{ notice.noticeSummary }}</h2>
+              <span
+                class="eb-badge"
+                [ngClass]="{
+                  'eb-badge--success': getStatus(notice) === 'active',
+                  'eb-badge--info': getStatus(notice) === 'upcoming',
+                  'eb-badge--muted': getStatus(notice) === 'expired'
+                }"
+              >
+                {{ getStatusLabel(getStatus(notice)) }}
+              </span>
+            </div>
+            <div class="eb-notice-card__dates">
+              <span class="eb-date-label">From</span>
+              <span>{{ notice.noticBegDt | date: 'mediumDate' }}</span>
+              <span class="eb-date-separator">•</span>
+              <span class="eb-date-label">To</span>
+              <span>{{ notice.noticEndDt | date: 'mediumDate' }}</span>
+            </div>
+          </header>
+
+          <p class="eb-notice-card__body">
+            {{ notice.noticeDetails }}
+          </p>
+        </article>
+      </div>
+
+      <!-- No notices -->
+      <ng-template #noNotices>
+        <div class="eb-empty-state">
+          <div class="eb-empty-state__icon">✅</div>
+          <h2>All systems are running smoothly</h2>
+          <p>
+            There are currently no active system notices or planned maintenance windows affecting
+            your EasyBank services.
+          </p>
+        </div>
+      </ng-template>
+    </ng-container>
+  </section>
+</div>
