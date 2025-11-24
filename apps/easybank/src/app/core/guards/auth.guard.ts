@@ -13,10 +13,9 @@ const isAccessAllowed = async (
   state: RouterStateSnapshot,
   authData: AuthGuardData
 ): Promise<boolean> => {
-  const { authenticated, grantedRoles } = authData;
+  const { authenticated, grantedRoles, keycloak } = authData;
   const router = inject(Router);
   const logger = inject(LoggerService);
-  const keycloak = inject(Keycloak);
 
   logger.navigation(`Auth Guard checking access to: ${state.url}`);
   logger.debug('Auth Guard Data:', { authenticated, realmRoles: grantedRoles.realmRoles });
