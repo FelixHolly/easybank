@@ -1,0 +1,102 @@
+/* ==========================================================================
+   BADGES & PILLS
+   Shared badge and pill components
+   ========================================================================== */
+
+/* PILL COMPONENT (subtle accent) */
+.eb-pill {
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  font-size: 0.75rem;
+  color: var(--eb-text-muted);
+  background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 60%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+/* BADGE COMPONENT (status indicators) */
+.eb-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  border: 1px solid transparent;
+  gap: 0.25rem;
+
+  /* Success variant */
+  &--success {
+    background: rgba(34, 197, 94, 0.12);
+    border-color: rgba(34, 197, 94, 0.65);
+    color: #bbf7d0;
+  }
+
+  /* Error variant */
+  &--error {
+    background: rgba(239, 68, 68, 0.12);
+    border-color: rgba(239, 68, 68, 0.65);
+    color: #fecaca;
+  }
+
+  /* Warning variant */
+  &--warning {
+    background: rgba(251, 191, 36, 0.12);
+    border-color: rgba(251, 191, 36, 0.65);
+    color: #fde68a;
+  }
+
+  /* Info variant */
+  &--info {
+    background: rgba(99, 102, 241, 0.12);
+    border-color: rgba(99, 102, 241, 0.65);
+    color: #c7d2fe;
+  }
+
+  /* Neutral variant */
+  &--neutral {
+    background: rgba(148, 163, 184, 0.12);
+    border-color: rgba(148, 163, 184, 0.65);
+    color: #cbd5e1;
+  }
+}
+
+/* USER CHIP (avatar + info) */
+.eb-user-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.eb-user-chip__avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 999px;
+  background: radial-gradient(circle at top left, var(--eb-success), var(--eb-primary));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ecfeff;
+}
+
+.eb-user-chip__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.eb-user-chip__name {
+  font-size: 0.82rem;
+  color: #e5e7eb;
+}
+
+.eb-user-chip__label {
+  font-size: 0.72rem;
+  color: var(--eb-text-muted);
+}

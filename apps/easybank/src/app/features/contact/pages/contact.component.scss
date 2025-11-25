@@ -1,38 +1,23 @@
+@use '../../../../styles/mixins' as *;
+
 :host {
   display: block;
 }
 
 .eb-contact-page {
-  max-width: 1120px;
-  margin: 2.5rem auto 3.5rem;
-  padding: 0 1.25rem;
-  color: var(--eb-text);
+  @include page-container;
+  @include responsive-page-spacing;
 }
 
 /* HEADER */
 
 .eb-contact-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1.5rem;
-  margin-bottom: 1.75rem;
-}
-
-.eb-contact-header h1 {
-  margin: 0 0 0.35rem;
-  font-size: 1.6rem;
-}
-
-.eb-contact-header p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--eb-text-muted);
+  @include page-header;
+  @include responsive-header-stack;
 }
 
 .eb-contact-header__meta {
-  display: flex;
-  align-items: center;
+  @include page-header-meta;
 }
 
 .eb-pill {
@@ -47,20 +32,19 @@
 /* BODY LAYOUT */
 
 .eb-contact-body {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr);
-  gap: 2rem;
-  align-items: flex-start;
+  @include responsive-grid(minmax(0, 1.2fr) minmax(0, 1.4fr));
+
+  & {
+    gap: 2rem;
+  }
 }
 
 /* LEFT SIDE INFO */
 
 .eb-contact-info {
+  @include surface-card;
   padding: 1.6rem 1.4rem;
   border-radius: 1.25rem;
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.4);
 }
 
 .eb-contact-info h2 {
@@ -125,13 +109,9 @@
 /* RIGHT SIDE FORM */
 
 .eb-contact-form-wrapper {
+  @include gradient-card;
   padding: 1.6rem 1.4rem;
   border-radius: 1.25rem;
-  background: radial-gradient(circle at top left, rgba(37, 99, 235, 0.2), transparent 60%),
-  radial-gradient(circle at bottom right, rgba(34, 197, 94, 0.16), transparent 55%),
-  linear-gradient(135deg, #020617, #020617);
-  border: 1px solid rgba(148, 163, 184, 0.6);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.4);
 }
 
 /* SUCCESS MESSAGE CARD */
@@ -176,38 +156,10 @@
   color: var(--eb-text-muted);
 }
 
-/* ALERT */
-
+/* ALERT - Using global styles from _alerts.scss */
+/* Additional margin override */
 .eb-alert {
-  display: flex;
-  gap: 0.7rem;
-  align-items: flex-start;
-  padding: 0.75rem 0.8rem;
-  border-radius: 0.9rem;
   margin-bottom: 0.3rem;
-  font-size: 0.84rem;
-}
-
-.eb-alert--error {
-  background: rgba(239, 68, 68, 0.07);
-  border: 1px solid rgba(239, 68, 68, 0.7);
-  color: #fecaca;
-}
-
-.eb-alert__icon {
-  font-size: 1.1rem;
-  line-height: 1;
-  margin-top: 0.1rem;
-}
-
-.eb-alert__content h3 {
-  margin: 0 0 0.15rem;
-  font-size: 0.9rem;
-  color: #fecaca;
-}
-
-.eb-alert__content p {
-  margin: 0;
 }
 
 /* FORM FIELDS */
@@ -259,42 +211,7 @@ textarea.form-control {
   color: #fecaca;
 }
 
-/* BUTTONS */
-
-.btn {
-  border-radius: 999px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 0.6rem 1.2rem;
-  border: 1px solid transparent;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35rem;
-  text-decoration: none;
-  transition:
-    background-color 0.18s ease,
-    color 0.18s ease,
-    box-shadow 0.18s ease,
-    transform 0.15s ease,
-    border-color 0.18s ease;
-}
-
-.btn--primary {
-  background: linear-gradient(135deg, var(--eb-success), var(--eb-primary));
-  color: #ecfeff;
-  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.35);
-}
-
-.btn--primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 18px 38px rgba(56, 189, 248, 0.4);
-}
-
-.btn--block {
-  width: 100%;
-}
+/* BUTTONS - Using global styles from _buttons.scss */
 
 /* Spinner */
 
@@ -314,23 +231,9 @@ textarea.form-control {
 }
 
 /* RESPONSIVE */
-
-@media (max-width: 900px) {
-  .eb-contact-body {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
+/* Page and header responsive styles handled by mixins */
 
 @media (max-width: 720px) {
-  .eb-contact-page {
-    margin-top: 1.8rem;
-  }
-
-  .eb-contact-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .eb-contact-info,
   .eb-contact-form-wrapper {
     padding-inline: 1.1rem;

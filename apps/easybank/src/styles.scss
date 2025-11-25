@@ -5,6 +5,15 @@
 /* Import design tokens */
 @use './styles/variables' as *;
 @use './styles/theme' as *;
+@use './styles/mixins' as *;
+
+/* Import shared components */
+@use './styles/components/alerts';
+@use './styles/components/badges';
+@use './styles/components/buttons';
+@use './styles/components/cards';
+@use './styles/components/empty-states';
+@use './styles/components/skeletons';
 
 /* GLOBAL RESET / NORMALIZATION */
 *,

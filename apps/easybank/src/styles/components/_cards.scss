@@ -1,0 +1,60 @@
+/* ==========================================================================
+   CARDS
+   Shared card patterns and components
+   ========================================================================== */
+
+@use '../mixins' as *;
+
+/* CARD EYEBROW (small label above heading) */
+.eb-card__eyebrow,
+.eb-account-card__eyebrow,
+.eb-balance-card__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #a5b4fc;
+  margin-bottom: 0.25rem;
+}
+
+/* CARD HEADER PATTERN */
+.eb-card__header {
+  @include card-header;
+}
+
+/* DETAIL GROUP (label + value pair) */
+.detail-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.detail-label {
+  font-size: 0.78rem;
+  color: var(--eb-text-muted);
+}
+
+.detail-value {
+  font-size: 0.88rem;
+  color: var(--eb-text);
+}
+
+/* DETAIL ROW (horizontal label + value) */
+.detail-row {
+  @include detail-row;
+}
+
+/* PROFILE AVATAR */
+.eb-profile-avatar {
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 999px;
+  background: radial-gradient(circle at top left, var(--eb-primary), var(--eb-success));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ecfeff;
+}

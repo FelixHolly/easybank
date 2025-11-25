@@ -1,38 +1,23 @@
+@use '../../../../styles/mixins' as *;
+
 :host {
   display: block;
 }
 
 .eb-loans-page {
-  max-width: 1120px;
-  margin: 2.5rem auto 3.5rem;
-  padding: 0 1.25rem;
-  color: var(--eb-text);
+  @include page-container;
+  @include responsive-page-spacing;
 }
 
 /* HEADER */
 
 .eb-loans-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1.5rem;
-  margin-bottom: 1.75rem;
-}
-
-.eb-loans-header h1 {
-  margin: 0 0 0.35rem;
-  font-size: 1.6rem;
-}
-
-.eb-loans-header p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--eb-text-muted);
+  @include page-header;
+  @include responsive-header-stack;
 }
 
 .eb-loans-header__meta {
-  display: flex;
-  align-items: center;
+  @include page-header-meta;
 }
 
 .eb-pill {
@@ -52,118 +37,22 @@
   gap: 1.25rem;
 }
 
-/* ALERT */
-
-.eb-alert {
-  display: flex;
-  gap: 0.8rem;
-  align-items: flex-start;
-  padding: 0.9rem 1rem;
-  border-radius: 0.9rem;
-  font-size: 0.86rem;
-}
-
-.eb-alert--error {
-  background: rgba(239, 68, 68, 0.07);
-  border: 1px solid rgba(239, 68, 68, 0.7);
-  color: #fecaca;
-}
-
-.eb-alert__icon {
-  font-size: 1.1rem;
-  line-height: 1;
-  margin-top: 0.1rem;
-}
-
-.eb-alert__content h2 {
-  margin: 0 0 0.15rem;
-  font-size: 0.95rem;
-  color: #fecaca;
-}
-
-.eb-alert__content p {
-  margin: 0;
-}
-
-/* BUTTON */
-
-.btn {
-  border-radius: 999px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  padding: 0.45rem 1.1rem;
-  border: 1px solid transparent;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.3rem;
-  text-decoration: none;
-  transition:
-    background-color 0.18s ease,
-    color 0.18s ease,
-    box-shadow 0.18s ease,
-    transform 0.15s ease,
-    border-color 0.18s ease;
-  white-space: nowrap;
-}
-
-.btn--ghost {
-  background: transparent;
-  border-color: rgba(148, 163, 184, 0.7);
-  color: #e5e7eb;
-}
-
-.btn--ghost:hover {
-  background: rgba(15, 23, 42, 0.88);
-}
-
-/* EMPTY STATE */
-
-.eb-empty-state {
-  margin-top: 0.5rem;
-  padding: 1.5rem 1.3rem 1.4rem;
-  border-radius: 1.1rem;
-  border: 1px dashed rgba(148, 163, 184, 0.7);
-  background: rgba(15, 23, 42, 0.93);
-  text-align: left;
-}
-
-.eb-empty-state__icon {
-  font-size: 1.4rem;
-  margin-bottom: 0.3rem;
-}
-
-.eb-empty-state h2 {
-  margin: 0 0 0.3rem;
-  font-size: 1.05rem;
-}
-
-.eb-empty-state p {
-  margin: 0;
-  font-size: 0.85rem;
-  color: var(--eb-text-muted);
-}
+/* ALERT - Using global styles from _alerts.scss */
+/* BUTTON - Using global styles from _buttons.scss */
+/* EMPTY STATE - Using global styles from _empty-states.scss */
 
 /* LAYOUT */
 
 .eb-loans-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.5fr);
-  gap: 1.8rem;
-  align-items: flex-start;
+  @include responsive-grid(minmax(0, 0.9fr) minmax(0, 1.5fr));
 }
 
 /* SUMMARY PANEL */
 
 .eb-loans-summary {
+  @include gradient-card((251, 191, 36), (248, 113, 113));
   padding: 1.5rem 1.35rem;
   border-radius: 1.25rem;
-  background: radial-gradient(circle at top left, rgba(251, 191, 36, 0.25), transparent 60%),
-  radial-gradient(circle at bottom right, rgba(248, 113, 113, 0.2), transparent 55%),
-  linear-gradient(135deg, #020617, #020617);
-  border: 1px solid rgba(248, 250, 252, 0.08);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.5);
 }
 
 .eb-loans-summary h2 {
@@ -200,26 +89,14 @@
 /* LOANS LIST */
 
 .eb-loans-list {
+  @include surface-card;
   padding: 1.4rem 1.2rem;
   border-radius: 1.25rem;
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid rgba(148, 163, 184, 0.5);
-  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.45);
 }
 
 .eb-loans-list__header {
+  @include card-header;
   margin-bottom: 1rem;
-}
-
-.eb-loans-list__header h2 {
-  margin: 0 0 0.25rem;
-  font-size: 1.1rem;
-}
-
-.eb-loans-list__header p {
-  margin: 0;
-  font-size: 0.8rem;
-  color: var(--eb-text-muted);
 }
 
 .eb-loan-cards {
@@ -292,20 +169,10 @@
   display: flex;
   flex-direction: column;
   gap: 0.45rem;
-}
 
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.86rem;
-}
-
-.detail-row .label {
-  color: var(--eb-text-muted);
-}
-
-.detail-row .value {
-  font-weight: 500;
+  .detail-row {
+    @include detail-row;
+  }
 }
 
 .detail-row .value--paid {
@@ -354,9 +221,7 @@
 /* SKELETON */
 
 .eb-loans-skeleton {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.5fr);
-  gap: 1.8rem;
+  @include responsive-grid(minmax(0, 0.9fr) minmax(0, 1.5fr));
 }
 
 .eb-skeleton-card {
@@ -412,24 +277,9 @@
 }
 
 /* RESPONSIVE */
-
-@media (max-width: 900px) {
-  .eb-loans-layout,
-  .eb-loans-skeleton {
-    grid-template-columns: minmax(0, 1fr);
-  }
-}
+/* Page, header, layout, and skeleton responsive styles handled by mixins */
 
 @media (max-width: 720px) {
-  .eb-loans-page {
-    margin-top: 1.8rem;
-  }
-
-  .eb-loans-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .eb-loans-summary,
   .eb-loans-list {
     padding-inline: 1.1rem;

@@ -1,0 +1,45 @@
+/* ==========================================================================
+   EMPTY STATES
+   Shared empty state component
+   ========================================================================== */
+
+.eb-empty-state {
+  margin-top: 0.5rem;
+  padding: 1.5rem 1.3rem 1.4rem;
+  border-radius: 1.1rem;
+  border: 1px dashed rgba(148, 163, 184, 0.7);
+  background: rgba(15, 23, 42, 0.93);
+  text-align: left;
+
+  /* Center variant */
+  &--center {
+    text-align: center;
+  }
+
+  /* Compact variant */
+  &--compact {
+    padding: 1rem 0.3rem 0.2rem;
+  }
+}
+
+.eb-empty-state__icon {
+  font-size: 1.4rem;
+  margin-bottom: 0.3rem;
+}
+
+.eb-empty-state h2,
+.eb-empty-state h3 {
+  margin: 0 0 0.3rem;
+  font-size: 1.05rem;
+  color: var(--eb-text);
+}
+
+.eb-empty-state h3 {
+  font-size: 0.98rem;
+}
+
+.eb-empty-state p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--eb-text-muted);
+}
