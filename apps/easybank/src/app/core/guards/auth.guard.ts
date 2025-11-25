@@ -17,6 +17,7 @@ const isAccessAllowed = async (
   const router = inject(Router);
   const logger = inject(LoggerService);
 
+  logger.debug('[AUTH GUARD] checking access for', state.url);
   logger.navigation(`Auth Guard checking access to: ${state.url}`);
   logger.debug('Auth Guard Data:', { authenticated, realmRoles: grantedRoles.realmRoles });
 

@@ -1,6 +1,6 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { AuthService } from '../../features/auth/services/auth.service';
+import {Component, inject} from '@angular/core';
+import {RouterLink} from '@angular/router';
+import {AuthService} from '../../features/auth/services/auth.service';
 
 /**
  * Home Component (Public Landing Page)
@@ -10,7 +10,7 @@ import { AuthService } from '../../features/auth/services/auth.service';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
 })

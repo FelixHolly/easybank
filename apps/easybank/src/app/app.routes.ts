@@ -9,19 +9,28 @@ export const appRoutes: Routes = [
     pathMatch: 'full',
   },
 
-  // Public home/landing page
+  // Public routes
   {
     path: 'home',
     loadComponent: () =>
       import('./pages/home/home.component').then((m) => m.HomeComponent),
     title: 'Home - EasyBank',
   },
-
-  // Auth routes (login, register, forgot-password)
   {
-    path: 'auth',
-    loadChildren: () =>
-      import('./features/auth/auth.routes').then((m) => m.authRoutes),
+    path: 'contact',
+    loadComponent: () =>
+      import('./features/contact/pages/contact.component').then(
+        (m) => m.ContactComponent
+      ),
+    title: 'Contact Us - EasyBank',
+  },
+  {
+    path: 'notices',
+    loadComponent: () =>
+      import('./features/notices/pages/notices.component').then(
+        (m) => m.NoticesComponent
+      ),
+    title: 'Notices - EasyBank',
   },
 
   // Protected routes with authentication
@@ -30,7 +39,6 @@ export const appRoutes: Routes = [
     canActivate: [authGuard],
     data: { roles: ['USER'] },
     children: [
-      // Dashboard (user home after login)
       {
         path: 'dashboard',
         loadChildren: () =>
@@ -38,8 +46,6 @@ export const appRoutes: Routes = [
             (m) => m.dashboardRoutes
           ),
       },
-
-      // Account feature
       {
         path: 'account',
         data: { roles: ['USER'] },
@@ -49,8 +55,6 @@ export const appRoutes: Routes = [
           ),
         title: 'My Account - EasyBank',
       },
-
-      // Balance feature
       {
         path: 'balance',
         data: { roles: ['USER'] },
@@ -60,8 +64,6 @@ export const appRoutes: Routes = [
           ),
         title: 'Balance - EasyBank',
       },
-
-      // Loans feature
       {
         path: 'loans',
         data: { roles: ['USER'] },
@@ -71,8 +73,6 @@ export const appRoutes: Routes = [
           ),
         title: 'My Loans - EasyBank',
       },
-
-      // Cards feature
       {
         path: 'cards',
         data: { roles: ['USER'] },
@@ -85,35 +85,10 @@ export const appRoutes: Routes = [
     ],
   },
 
-  // Public routes (no authentication required)
-  {
-    path: '',
-    children: [
-      // Contact page
-      {
-        path: 'contact',
-        loadComponent: () =>
-          import('./features/contact/pages/contact.component').then(
-            (m) => m.ContactComponent
-          ),
-        title: 'Contact Us - EasyBank',
-      },
-
-      // Notices page
-      {
-        path: 'notices',
-        loadComponent: () =>
-          import('./features/notices/pages/notices.component').then(
-            (m) => m.NoticesComponent
-          ),
-        title: 'Notices - EasyBank',
-      },
-    ],
-  },
-
   // Wildcard route - 404 page
   {
     path: '**',
     redirectTo: 'home',
   },
 ];
+

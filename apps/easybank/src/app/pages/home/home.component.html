@@ -4,27 +4,12 @@
     <div class="eb-nav__inner">
       <a routerLink="/home" class="eb-nav__brand">
         <div class="eb-logo">
-          <span class="eb-logo__icon">EB</span>
           <div class="eb-logo__text">
             <span class="eb-logo__title">EasyBank</span>
             <span class="eb-logo__subtitle">Digital Banking</span>
           </div>
         </div>
       </a>
-
-      <ul class="eb-nav__links">
-        <li>
-          <a
-            routerLink="/home"
-            routerLinkActive="is-active"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
-            Home
-          </a>
-        </li>
-        <li><a routerLink="/notices" routerLinkActive="is-active">Notices</a></li>
-        <li><a routerLink="/contact" routerLinkActive="is-active">Contact</a></li>
-      </ul>
 
       <div class="eb-nav__actions">
         <button type="button" class="btn btn--ghost" (click)="onLogin()">Log in</button>
@@ -88,7 +73,7 @@
           <div class="eb-card__number">5164 •• •• 2891</div>
           <div class="eb-card__bottom">
             <div>
-              <div class="eb-card__holder">FELIX HOLLNDONNER</div>
+              <div class="eb-card__holder">MAX MUSTERMAN</div>
               <div class="eb-card__meta">VALID THRU 12/28</div>
             </div>
             <div class="eb-card__brand">VISA</div>

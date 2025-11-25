@@ -102,10 +102,6 @@ export class DashboardHomeComponent implements OnInit {
     // });
   }
 
-  async onLogout(): Promise<void> {
-    await this.authService.logout();
-  }
-
   isCredit(tx: DashboardTransaction): boolean {
     return tx.type === 'Credit';
   }
