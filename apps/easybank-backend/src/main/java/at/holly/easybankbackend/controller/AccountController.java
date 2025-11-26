@@ -1,5 +1,7 @@
 package at.holly.easybankbackend.controller;
 
+import at.holly.easybankbackend.dto.AccountDto;
+import at.holly.easybankbackend.dto.AccountMapper;
 import at.holly.easybankbackend.model.Account;
 import at.holly.easybankbackend.model.User;
 import at.holly.easybankbackend.repository.AccountRepository;
@@ -21,13 +23,17 @@ public class AccountController {
 
   private final AccountRepository accountRepository;
   private final UserProvisioningService userProvisioningService;
+  private final AccountMapper accountMapper;
 
   /**
    * Get account details for a user
    * Automatically provisions user from Keycloak on first access (JIT provisioning)
+   *
+   * @param authentication the authentication object containing JWT token
+   * @return the account DTO, or null if no account exists
    */
   @GetMapping("/myAccount")
-  public Account getAccountDetails(Authentication authentication) {
+  public AccountDto getAccountDetails(Authentication authentication) {
     log.info("GET /myAccount - Fetching account details");
     log.debug("Authentication: {}, Authorities: {}",
       authentication.getName(), authentication.getAuthorities());
@@ -39,7 +45,7 @@ public class AccountController {
     Account account = accountRepository.findByUserId(user.getId());
     log.info("Account retrieved successfully for user: {}", user.getEmail());
 
-    return account;
+    return accountMapper.toDto(account);
   }
 
 }

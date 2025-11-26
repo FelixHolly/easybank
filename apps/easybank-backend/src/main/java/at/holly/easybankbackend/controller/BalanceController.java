@@ -1,5 +1,7 @@
 package at.holly.easybankbackend.controller;
 
+import at.holly.easybankbackend.dto.AccountTransactionDto;
+import at.holly.easybankbackend.dto.AccountTransactionMapper;
 import at.holly.easybankbackend.model.AccountTransaction;
 import at.holly.easybankbackend.model.User;
 import at.holly.easybankbackend.repository.AccountTransactionRepository;
@@ -21,17 +23,23 @@ public class BalanceController {
 
   private final AccountTransactionRepository accountTransactionRepository;
   private final UserProvisioningService userProvisioningService;
+  private final AccountTransactionMapper accountTransactionMapper;
 
   /**
    * Get transaction history for a user
    * Automatically provisions user from Keycloak on first access (JIT provisioning)
+   *
+   * @param authentication the authentication object containing JWT token
+   * @return list of account transaction DTOs ordered by transaction date descending
    */
   @GetMapping("/myBalance")
-  public List<AccountTransaction> getBalanceDetails(Authentication authentication) {
+  public List<AccountTransactionDto> getBalanceDetails(Authentication authentication) {
     // Get or create user (JIT provisioning)
     User user = userProvisioningService.getOrCreateUser(authentication);
 
-    return accountTransactionRepository.findByUserIdOrderByTransactionDtDesc(user.getId());
+    List<AccountTransaction> transactions =
+        accountTransactionRepository.findByUserIdOrderByTransactionDtDesc(user.getId());
+    return accountTransactionMapper.toDtoList(transactions);
   }
 
 }
