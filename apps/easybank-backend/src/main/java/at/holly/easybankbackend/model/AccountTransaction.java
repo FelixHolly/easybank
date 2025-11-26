@@ -22,8 +22,8 @@ public class AccountTransaction {
   @Column(name="account_number")
   private long accountNumber;
 
-  @Column(name = "customer_id")
-  private long customerId;
+  @Column(name = "user_id")
+  private long userId;
 
   @Column(name="transaction_dt")
   private Date transactionDt;

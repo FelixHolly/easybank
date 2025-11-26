@@ -1,17 +1,15 @@
 package at.holly.easybankbackend.controller;
 
 import at.holly.easybankbackend.model.AccountTransaction;
-import at.holly.easybankbackend.model.Customer;
+import at.holly.easybankbackend.model.User;
 import at.holly.easybankbackend.repository.AccountTransactionRepository;
-import at.holly.easybankbackend.repository.CustomerRepository;
-import at.holly.easybankbackend.service.JwtService;
+import at.holly.easybankbackend.service.UserProvisioningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Balance Controller
@@ -22,25 +20,18 @@ import java.util.Optional;
 public class BalanceController {
 
   private final AccountTransactionRepository accountTransactionRepository;
-  private final CustomerRepository customerRepository;
-  private final JwtService jwtService;
+  private final UserProvisioningService userProvisioningService;
 
   /**
-   * Get transaction history for a customer
-   * Extracts email from JWT token claims
+   * Get transaction history for a user
+   * Automatically provisions user from Keycloak on first access (JIT provisioning)
    */
   @GetMapping("/myBalance")
   public List<AccountTransaction> getBalanceDetails(Authentication authentication) {
-    // Extract email from JWT token using JwtService
-    String email = jwtService.extractEmail(authentication);
-    System.out.println(email);
+    // Get or create user (JIT provisioning)
+    User user = userProvisioningService.getOrCreateUser(authentication);
 
-    Optional<Customer> maybeCustomer = customerRepository.findByEmail(email);
-    if (maybeCustomer.isEmpty()) {
-      throw new RuntimeException("Customer not found with email: " + email);
-    }
-
-    return accountTransactionRepository.findByCustomerIdOrderByTransactionDtDesc(maybeCustomer.get().getId());
+    return accountTransactionRepository.findByUserIdOrderByTransactionDtDesc(user.getId());
   }
 
 }

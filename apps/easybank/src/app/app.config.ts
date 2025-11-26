@@ -33,8 +33,8 @@ export const appConfig: ApplicationConfig = {
       },
       initOptions: {
         pkceMethod: 'S256',
-        //onLoad: 'check-sso',
-        //redirectUri: 'http://localhost:4200/dashboard',
+        onLoad: 'check-sso',
+        redirectUri: 'http://localhost:4200/dashboard',
         //silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
       },
       providers: [

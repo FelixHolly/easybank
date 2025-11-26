@@ -6,14 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO for customer data in API responses
+ * DTO for user data in API responses
  * Excludes sensitive data like password
  */
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CustomerDto {
+public class UserDto {
 
   private Long id;
   private String name;

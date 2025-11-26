@@ -1,17 +1,15 @@
 package at.holly.easybankbackend.controller;
 
 import at.holly.easybankbackend.model.Card;
-import at.holly.easybankbackend.model.Customer;
+import at.holly.easybankbackend.model.User;
 import at.holly.easybankbackend.repository.CardRepository;
-import at.holly.easybankbackend.repository.CustomerRepository;
-import at.holly.easybankbackend.service.JwtService;
+import at.holly.easybankbackend.service.UserProvisioningService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Cards Controller
@@ -22,24 +20,18 @@ import java.util.Optional;
 public class CardsController {
 
   private final CardRepository cardRepository;
-  private final CustomerRepository customerRepository;
-  private final JwtService jwtService;
+  private final UserProvisioningService userProvisioningService;
 
   /**
-   * Get card details for a customer
-   * Extracts email from JWT token claims
+   * Get card details for a user
+   * Automatically provisions user from Keycloak on first access (JIT provisioning)
    */
   @GetMapping("/myCards")
   public List<Card> getCardsDetails(Authentication authentication) {
-    // Extract email from JWT token using JwtService
-    String email = jwtService.extractEmail(authentication);
+    // Get or create user (JIT provisioning)
+    User user = userProvisioningService.getOrCreateUser(authentication);
 
-    Optional<Customer> maybeCustomer = customerRepository.findByEmail(email);
-    if (maybeCustomer.isEmpty()) {
-      throw new RuntimeException("Customer not found with email: " + email);
-    }
-
-    return cardRepository.findByCustomerId(maybeCustomer.get().getId());
+    return cardRepository.findByUserId(user.getId());
   }
 
 }

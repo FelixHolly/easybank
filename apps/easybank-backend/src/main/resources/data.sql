@@ -1,59 +1,20 @@
 -- -------------------------
--- CUSTOMERS  (AUTO ID)
+-- USERS  (AUTO ID)
 -- -------------------------
-INSERT INTO customers (
-  name, email, mobile_number, password, create_dt
+INSERT INTO users (
+  name, email, create_dt
 ) VALUES
-    ('Alice Adams',   'alice.adams@example.com',   '702-555-0100', '{noop}password', '2025-10-01'),
-    ('Bob Brown',     'bob.brown@example.com',     '702-555-0101', '{noop}password', '2025-10-02'),
-    ('Charlie Carter','charlie.carter@example.com','702-555-0102', '{noop}password', '2025-10-03'),
-    ('Diana Dawson',  'diana.dawson@example.com',  '702-555-0103', '{noop}password', '2025-10-04'),
-    ('Admin User',    'admin@example.com',         '702-555-0104', '{noop}adminpass', '2025-10-05');
-
--- -------------------------
--- CUSTOMER ROLES (many-to-many)
--- -------------------------
-INSERT INTO customer_roles (customer_id, role) VALUES
-    (1, 'USER'),            -- Alice: USER
-    (2, 'USER'),            -- Bob: USER
-    (3, 'USER'),            -- Charlie: USER
-    (4, 'USER'),            -- Diana: USER
-    (4, 'MANAGER'),         -- Diana: also MANAGER (showing multiple roles)
-    (5, 'USER'),            -- Admin: USER
-    (5, 'ADMIN'),           -- Admin: ADMIN
-    (5, 'MANAGER');         -- Admin: also MANAGER (full privileges)
-
--- -------------------------
--- CUSTOMER AUTHORITIES (Custom/Exception permissions only)
--- -------------------------
--- With RBAC, authorities are automatically granted based on roles via AuthorityService.
--- This table stores ONLY custom/exception authorities beyond role defaults.
---
--- Examples of when to use custom authorities:
--- 1. Temporarily grant extra permission (e.g., USER gets REPORT_GENERATE for audit)
--- 2. Revoke specific permission (future enhancement: negative authorities)
--- 3. Grant permission before role change (e.g., USER testing MANAGER features)
---
--- For demonstration, we'll add a few custom authorities:
-
--- Alice gets special report access (beyond USER role)
-INSERT INTO customer_authorities (customer_id, authority) VALUES
-    (1, 'REPORT_GENERATE');
-
--- Charlie gets temporary card activation rights (beyond USER role)
-INSERT INTO customer_authorities (customer_id, authority) VALUES
-    (3, 'CARD_ACTIVATE');
-
--- Note: Bob, Diana, and Admin don't need custom authorities
--- - Bob: Gets all authorities from USER role (via AuthorityService)
--- - Diana: Gets authorities from USER + MANAGER roles (via AuthorityService)
--- - Admin: Gets all authorities from ADMIN role (via AuthorityService)
+    ('Alice Adams',   'alice.adams@example.com',   '2025-10-01'),
+    ('Bob Brown',     'bob.brown@example.com',     '2025-10-02'),
+    ('Charlie Carter','charlie.carter@example.com','2025-10-03'),
+    ('Diana Dawson',  'diana.dawson@example.com',  '2025-10-04'),
+    ('Admin User',    'admin@example.com',         '2025-10-05');
 
 -- -------------------------
 -- ACCOUNTS
 -- -------------------------
 INSERT INTO accounts (
-  customer_id, account_number, account_type, branch_address, create_dt
+  user_id, account_number, account_type, branch_address, create_dt
 ) VALUES
     (1, 10000001, 'SAVINGS',  '123 Main St, Las Vegas, NV',  '2025-10-01'),
     (2, 10000002, 'CHECKING', '456 Desert Ave, Henderson, NV','2025-10-02'),
@@ -67,7 +28,7 @@ INSERT INTO accounts (
 INSERT INTO account_transactions (
   transaction_id,
   account_number,
-  customer_id,
+  user_id,
   transaction_dt,
   transaction_summary,
   transaction_type,
@@ -87,7 +48,7 @@ INSERT INTO account_transactions (
 -- CARDS
 -- -------------------------
 INSERT INTO cards (
-  card_id, customer_id, card_number, card_type, total_limit, amount_used, available_amount, create_dt
+  card_id, user_id, card_number, card_type, total_limit, amount_used, available_amount, create_dt
 ) VALUES
     (5001, 1, '4111111111111111', 'VISA',       5000, 1200, 3800, '2025-10-01'),
     (5002, 2, '5555555555554444', 'MASTERCARD', 3000,  750, 2250, '2025-10-02'),
@@ -112,7 +73,7 @@ INSERT INTO contact_messages (
 -- -------------------------
 INSERT INTO loans (
   loan_number,
-  customer_id,
+  user_id,
   start_dt,
   loan_type,
   total_loan,

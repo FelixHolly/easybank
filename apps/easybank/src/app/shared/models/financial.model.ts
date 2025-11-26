@@ -5,7 +5,7 @@
 
 export interface Loan {
   loanNumber: number;
-  customerId: number;
+  userId: number;
   startDt: string;
   loanType: string;
   totalLoan: number;
@@ -16,7 +16,7 @@ export interface Loan {
 
 export interface Card {
   cardId: number;
-  customerId: number;
+  userId: number;
   cardNumber: string;
   cardType: string;
   totalLimit: number;
@@ -26,7 +26,7 @@ export interface Card {
 }
 
 export interface Account {
-  customerId: number;
+  userId: number;
   accountNumber: number;
   accountType: string;
   branchAddress: string;
@@ -36,7 +36,7 @@ export interface Account {
 export interface AccountTransaction {
   transactionId: string;
   accountNumber: number;
-  customerId: number;
+  userId: number;
   transactionDt: string;
   transactionSummary: string;
   transactionType: string;

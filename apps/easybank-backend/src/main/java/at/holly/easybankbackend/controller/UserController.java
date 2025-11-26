@@ -1,37 +1,41 @@
 package at.holly.easybankbackend.controller;
 
+import at.holly.easybankbackend.dto.UserDto;
+import at.holly.easybankbackend.dto.UserMapper;
 import at.holly.easybankbackend.model.User;
-import at.holly.easybankbackend.model.Loan;
-import at.holly.easybankbackend.repository.LoanRepository;
 import at.holly.easybankbackend.service.UserProvisioningService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 /**
- * Loans Controller
- * Handles loan-related operations with authority-based access control
+ * User Controller
+ * Handles user profile operations with automatic user provisioning
+ * Uses DTOs to avoid exposing entity details
  */
 @RestController
 @RequiredArgsConstructor
-public class LoansController {
+@Slf4j
+public class UserController {
 
-  private final LoanRepository loanRepository;
   private final UserProvisioningService userProvisioningService;
+  private final UserMapper userMapper;
 
   /**
-   * Get loan details for a user
+   * Get current user details
    * Automatically provisions user from Keycloak on first access (JIT provisioning)
+   * Returns DTO without sensitive information like password
    */
-  @GetMapping("/myLoans")
-  public List<Loan> getLoansDetails(Authentication authentication) {
+  @GetMapping("/user")
+  public UserDto getUserDetails(Authentication authentication) {
+    log.info("GET /user - Fetching user details");
+
     // Get or create user (JIT provisioning)
     User user = userProvisioningService.getOrCreateUser(authentication);
 
-    return loanRepository.findByUserIdOrderByStartDtDesc(user.getId());
+    log.info("User details retrieved: {} (ID: {})", user.getEmail(), user.getId());
+    return userMapper.toDto(user);
   }
-
 }

@@ -15,8 +15,8 @@ import java.sql.Date;
 @Table(name = "accounts")
 public class Account {
 
-  @Column(name = "customer_id")
-  private long customerId;
+  @Column(name = "user_id")
+  private long userId;
 
   @Id
   @Column(name="account_number")

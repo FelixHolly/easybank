@@ -1,8 +1,5 @@
 import {effect, inject, Injectable, signal} from '@angular/core';
-import {Router} from '@angular/router';
-import {Observable} from 'rxjs';
-import {ApiService, LoggerService, RegisterData, User} from '../../../core';
-import {API_CONFIG} from '../../../config';
+import {LoggerService, User} from '../../../core';
 import Keycloak from "keycloak-js";
 import {KEYCLOAK_EVENT_SIGNAL, KeycloakEventType, ReadyArgs, typeEventArgs} from 'keycloak-angular';
 
@@ -14,8 +11,6 @@ import {KEYCLOAK_EVENT_SIGNAL, KeycloakEventType, ReadyArgs, typeEventArgs} from
   providedIn: 'root',
 })
 export class AuthService {
-  private api = inject(ApiService);
-  private router = inject(Router);
   private logger = inject(LoggerService);
   private readonly keycloak = inject(Keycloak);
   private readonly keycloakEventSignal = inject(KEYCLOAK_EVENT_SIGNAL);
@@ -113,10 +108,22 @@ export class AuthService {
   }
 
   /**
-   * Register new user (still uses backend API)
+   * Register new user via Keycloak
+   * Redirects to Keycloak's registration page
+   * After successful registration, user is automatically logged in and redirected back
    */
-  register(credentials: RegisterData): Observable<string> {
-    return this.api.post<string>(API_CONFIG.endpoints.auth.register, credentials);
+  async register(redirectUri?: string): Promise<void> {
+    const redirect = redirectUri || window.location.origin + '/dashboard';
+    this.logger.auth(`Initiating Keycloak registration with redirect: ${redirect}`);
+
+    try {
+      await this.keycloak.register({
+        redirectUri: redirect
+      });
+    } catch (error) {
+      this.logger.error('Registration redirect failed', error);
+      throw error;
+    }
   }
 
   /**
