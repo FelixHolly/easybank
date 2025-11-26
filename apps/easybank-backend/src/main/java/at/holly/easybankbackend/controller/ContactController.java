@@ -4,6 +4,7 @@ import at.holly.easybankbackend.dto.ContactDto;
 import at.holly.easybankbackend.dto.ContactMapper;
 import at.holly.easybankbackend.model.Contact;
 import at.holly.easybankbackend.repository.ContactRepository;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,11 +29,11 @@ public class ContactController {
    * Submit a contact/support inquiry
    * This endpoint is public - no authentication required
    *
-   * @param contactDto the contact inquiry details
+   * @param contactDto the contact inquiry details (validated)
    * @return the saved contact inquiry DTO with generated ID
    */
   @PostMapping("/contact")
-  public ResponseEntity<ContactDto> saveContactInquiryDetails(@RequestBody ContactDto contactDto) {
+  public ResponseEntity<ContactDto> saveContactInquiryDetails(@Valid @RequestBody ContactDto contactDto) {
     // Convert DTO to entity
     Contact contact = contactMapper.toEntity(contactDto);
 
