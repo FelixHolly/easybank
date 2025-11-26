@@ -1,14 +1,14 @@
 package at.holly.easybankbackend.repository;
 
 import at.holly.easybankbackend.model.Card;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface CardRepository extends CrudRepository<Card, Long> {
+public interface CardRepository extends JpaRepository<Card, Long> {
 
-  List<Card> findByUserId(long userId);
+  Page<Card> findByUserId(long userId, Pageable pageable);
 
 }

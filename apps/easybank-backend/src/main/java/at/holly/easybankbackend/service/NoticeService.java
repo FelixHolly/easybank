@@ -6,6 +6,8 @@ import at.holly.easybankbackend.model.Notice;
 import at.holly.easybankbackend.repository.NoticeRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +26,26 @@ public class NoticeService {
   private final NoticeMapper noticeMapper;
 
   /**
-   * Get all active system notices
+   * Get all active system notices (paginated)
+   * Returns only notices that are currently active (current date within begin/end dates)
+   *
+   * @param pageable pagination and sorting parameters
+   * @return page of active notice DTOs
+   */
+  @Transactional(readOnly = true)
+  public Page<NoticeDto> getActiveNotices(Pageable pageable) {
+    log.info("Fetching active system notices (page {}, size {})",
+        pageable.getPageNumber(), pageable.getPageSize());
+
+    Page<Notice> activeNotices = noticeRepository.findAllActiveNotices(pageable);
+    log.info("Retrieved {} active notices (page {} of {})",
+        activeNotices.getNumberOfElements(), activeNotices.getNumber() + 1, activeNotices.getTotalPages());
+
+    return activeNotices.map(noticeMapper::toDto);
+  }
+
+  /**
+   * Get all active system notices (non-paginated - backward compatibility)
    * Returns only notices that are currently active (current date within begin/end dates)
    *
    * @return list of active notice DTOs

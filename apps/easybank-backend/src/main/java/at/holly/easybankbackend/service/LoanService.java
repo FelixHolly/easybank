@@ -7,11 +7,11 @@ import at.holly.easybankbackend.model.User;
 import at.holly.easybankbackend.repository.LoanRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * Loan Service
@@ -27,24 +27,27 @@ public class LoanService {
   private final LoanMapper loanMapper;
 
   /**
-   * Get loan details for authenticated user
+   * Get loan details for authenticated user (paginated)
    * Automatically provisions user from Keycloak on first access (JIT provisioning)
    *
    * @param authentication the authentication object containing JWT token
-   * @return list of loan DTOs ordered by start date descending
+   * @param pageable pagination and sorting parameters
+   * @return page of loan DTOs
    */
   @Transactional(readOnly = true)
-  public List<LoanDto> getLoansForUser(Authentication authentication) {
-    log.info("Fetching loan details for authenticated user");
+  public Page<LoanDto> getLoansForUser(Authentication authentication, Pageable pageable) {
+    log.info("Fetching loan details for authenticated user (page {}, size {})",
+        pageable.getPageNumber(), pageable.getPageSize());
 
     // Get or create user (JIT provisioning)
     User user = userProvisioningService.getOrCreateUser(authentication);
     log.info("User found (ID: {})", user.getId());
 
-    // Fetch loans
-    List<Loan> loans = loanRepository.findByUserIdOrderByStartDtDesc(user.getId());
-    log.info("Retrieved {} loans for user ID: {}", loans.size(), user.getId());
+    // Fetch loans with pagination
+    Page<Loan> loans = loanRepository.findByUserId(user.getId(), pageable);
+    log.info("Retrieved {} loans (page {} of {}) for user ID: {}",
+        loans.getNumberOfElements(), loans.getNumber() + 1, loans.getTotalPages(), user.getId());
 
-    return loanMapper.toDtoList(loans);
+    return loans.map(loanMapper::toDto);
   }
 }

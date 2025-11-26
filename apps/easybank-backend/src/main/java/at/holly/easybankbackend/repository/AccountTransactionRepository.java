@@ -1,14 +1,14 @@
 package at.holly.easybankbackend.repository;
 
 import at.holly.easybankbackend.model.AccountTransaction;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface AccountTransactionRepository extends CrudRepository<AccountTransaction, String> {
+public interface AccountTransactionRepository extends JpaRepository<AccountTransaction, String> {
 
-  List<AccountTransaction> findByUserIdOrderByTransactionDtDesc(long userId);
+  Page<AccountTransaction> findByUserId(long userId, Pageable pageable);
 
 }
