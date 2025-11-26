@@ -37,15 +37,15 @@ public class AccountService {
 
     // Get or create user (JIT provisioning)
     User user = userProvisioningService.getOrCreateUser(authentication);
-    log.info("User found: {} (ID: {})", user.getEmail(), user.getId());
+    log.info("User found (ID: {})", user.getId());
 
     // Fetch account
     Account account = accountRepository.findByUserId(user.getId());
 
     if (account != null) {
-      log.info("Account retrieved successfully for user: {}", user.getEmail());
+      log.info("Account retrieved successfully for user ID: {}", user.getId());
     } else {
-      log.info("No account found for user: {}", user.getEmail());
+      log.info("No account found for user ID: {}", user.getId());
     }
 
     return accountMapper.toDto(account);

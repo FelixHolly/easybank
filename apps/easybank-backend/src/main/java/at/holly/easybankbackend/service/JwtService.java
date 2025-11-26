@@ -31,7 +31,7 @@ public class JwtService {
       throw new RuntimeException("Email claim not found in JWT token");
     }
 
-    log.info("Successfully extracted email: {}", email);
+    log.debug("Successfully extracted email from JWT");
     return email;
   }
 

@@ -39,12 +39,12 @@ public class BalanceService {
 
     // Get or create user (JIT provisioning)
     User user = userProvisioningService.getOrCreateUser(authentication);
-    log.info("User found: {} (ID: {})", user.getEmail(), user.getId());
+    log.info("User found (ID: {})", user.getId());
 
     // Fetch transactions
     List<AccountTransaction> transactions =
         accountTransactionRepository.findByUserIdOrderByTransactionDtDesc(user.getId());
-    log.info("Retrieved {} transactions for user: {}", transactions.size(), user.getEmail());
+    log.info("Retrieved {} transactions for user ID: {}", transactions.size(), user.getId());
 
     return accountTransactionMapper.toDtoList(transactions);
   }

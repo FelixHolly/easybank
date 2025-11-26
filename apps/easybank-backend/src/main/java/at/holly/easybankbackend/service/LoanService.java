@@ -39,11 +39,11 @@ public class LoanService {
 
     // Get or create user (JIT provisioning)
     User user = userProvisioningService.getOrCreateUser(authentication);
-    log.info("User found: {} (ID: {})", user.getEmail(), user.getId());
+    log.info("User found (ID: {})", user.getId());
 
     // Fetch loans
     List<Loan> loans = loanRepository.findByUserIdOrderByStartDtDesc(user.getId());
-    log.info("Retrieved {} loans for user: {}", loans.size(), user.getEmail());
+    log.info("Retrieved {} loans for user ID: {}", loans.size(), user.getId());
 
     return loanMapper.toDtoList(loans);
   }

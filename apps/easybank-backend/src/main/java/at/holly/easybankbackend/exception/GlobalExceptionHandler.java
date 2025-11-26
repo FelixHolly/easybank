@@ -2,6 +2,7 @@ package at.holly.easybankbackend.exception;
 
 import at.holly.easybankbackend.dto.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
  * Provides standardized error responses across the application
  */
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler {
 
   /**
@@ -32,6 +34,8 @@ public class GlobalExceptionHandler {
   public ResponseEntity<ErrorResponse> handleValidationErrors(
       MethodArgumentNotValidException ex,
       HttpServletRequest request) {
+
+    log.warn("Validation failed for request to {}: {}", request.getRequestURI(), ex.getBindingResult().getErrorCount() + " errors");
 
     // Extract field validation errors
     List<ErrorResponse.ValidationError> validationErrors = ex.getBindingResult()
@@ -73,11 +77,14 @@ public class GlobalExceptionHandler {
       RuntimeException ex,
       HttpServletRequest request) {
 
+    // Log the actual error for debugging (not exposed to client)
+    log.error("Runtime exception occurred for request to {}: {}", request.getRequestURI(), ex.getMessage(), ex);
+
     ErrorResponse errorResponse = ErrorResponse.builder()
         .timestamp(LocalDateTime.now())
         .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
         .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-        .message(ex.getMessage())
+        .message("An unexpected error occurred. Please try again later.")
         .path(request.getRequestURI())
         .build();
 
@@ -97,11 +104,14 @@ public class GlobalExceptionHandler {
       Exception ex,
       HttpServletRequest request) {
 
+    // Log the actual error for debugging (not exposed to client)
+    log.error("Unexpected exception occurred for request to {}: {}", request.getRequestURI(), ex.getMessage(), ex);
+
     ErrorResponse errorResponse = ErrorResponse.builder()
         .timestamp(LocalDateTime.now())
         .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
         .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-        .message("An unexpected error occurred")
+        .message("An unexpected error occurred. Please try again later.")
         .path(request.getRequestURI())
         .build();
 

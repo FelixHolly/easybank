@@ -1,5 +1,6 @@
 package at.holly.easybankbackend.dto;
 
+import at.holly.easybankbackend.enums.AccountType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,7 @@ public class AccountDto {
 
     private Long accountNumber;
     private Long userId;
-    private String accountType;
+    private AccountType accountType;
     private String branchAddress;
 
     @JsonFormat(pattern = "yyyy-MM-dd")

@@ -1,5 +1,6 @@
 package at.holly.easybankbackend.controller;
 
+import at.holly.easybankbackend.enums.AccountType;
 import at.holly.easybankbackend.model.Account;
 import at.holly.easybankbackend.model.User;
 import at.holly.easybankbackend.repository.AccountRepository;
@@ -65,7 +66,7 @@ class AccountControllerTest {
       Account testAccount = new Account();
         testAccount.setAccountNumber(TEST_ACCOUNT_NUMBER);
         testAccount.setUserId(testUser.getId());
-        testAccount.setAccountType("SAVINGS");
+        testAccount.setAccountType(AccountType.SAVINGS);
         testAccount.setBranchAddress("123 Main St, Test City");
         testAccount.setCreateDt(Date.valueOf(LocalDate.now()));
         accountRepository.save(testAccount);

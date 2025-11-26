@@ -1,18 +1,24 @@
 package at.holly.easybankbackend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import at.holly.easybankbackend.enums.TransactionType;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.sql.Date;
 
 @Entity
 @Getter
 @Setter
-@Table(name="account_transactions")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(
+    name="account_transactions",
+    indexes = {
+        @Index(name = "idx_transaction_user_id", columnList = "user_id"),
+        @Index(name = "idx_transaction_account_number", columnList = "account_number")
+    }
+)
 public class AccountTransaction {
 
   @Id
@@ -31,8 +37,9 @@ public class AccountTransaction {
   @Column(name = "transaction_summary")
   private String transactionSummary;
 
+  @Enumerated(EnumType.STRING)
   @Column(name="transaction_type")
-  private String transactionType;
+  private TransactionType transactionType;
 
   @Column(name = "transaction_amt")
   private int transactionAmt;

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
-import java.util.Random;
+import java.util.UUID;
 
 /**
  * Contact Service
@@ -23,7 +23,6 @@ public class ContactService {
 
   private final ContactRepository contactRepository;
   private final ContactMapper contactMapper;
-  private final Random random = new Random();
 
   /**
    * Submit a contact/support inquiry
@@ -33,7 +32,7 @@ public class ContactService {
    */
   @Transactional
   public ContactDto saveContactInquiry(ContactDto contactDto) {
-    log.info("Saving contact inquiry from: {}", contactDto.getContactEmail());
+    log.info("Saving contact inquiry");
 
     // Convert DTO to entity
     Contact contact = contactMapper.toEntity(contactDto);
@@ -50,12 +49,13 @@ public class ContactService {
   }
 
   /**
-   * Generate a unique contact ID in format SR-XXXXXX
+   * Generate a unique contact ID in format SR-XXXXXXXX
+   * Uses UUID to ensure uniqueness and unpredictability
    * SR = Support Request
    *
    * @return the generated contact ID
    */
   private String generateContactId() {
-    return String.format("SR-%06d", random.nextInt(1000000));
+    return "SR-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
   }
 }

@@ -1,5 +1,6 @@
 package at.holly.easybankbackend.dto;
 
+import at.holly.easybankbackend.enums.LoanType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +25,7 @@ public class LoanDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date startDt;
 
-    private String loanType;
+    private LoanType loanType;
     private Integer totalLoan;
     private Integer amountPaid;
     private Integer outstandingAmount;

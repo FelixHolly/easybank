@@ -112,7 +112,7 @@ class ContactServiceTest {
     Contact savedContact = contactCaptor.getValue();
     assertThat(savedContact.getContactId()).isNotNull();
     assertThat(savedContact.getContactId()).startsWith("SR-");
-    assertThat(savedContact.getContactId()).matches("SR-\\d{6}");
+    assertThat(savedContact.getContactId()).matches("SR-[A-F0-9]{8}");
   }
 
   @Test

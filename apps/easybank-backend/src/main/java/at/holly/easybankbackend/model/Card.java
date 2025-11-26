@@ -1,5 +1,6 @@
 package at.holly.easybankbackend.model;
 
+import at.holly.easybankbackend.enums.CardType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +12,12 @@ import java.sql.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "cards")
+@Table(
+    name = "cards",
+    indexes = {
+        @Index(name = "idx_card_user_id", columnList = "user_id")
+    }
+)
 public class Card {
 
   @Id
@@ -24,8 +30,9 @@ public class Card {
   @Column(name = "card_number")
   private String cardNumber;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "card_type")
-  private String cardType;
+  private CardType cardType;
 
   @Column(name = "total_limit")
   private int totalLimit;

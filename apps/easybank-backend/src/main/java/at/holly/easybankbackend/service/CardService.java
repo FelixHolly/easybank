@@ -39,11 +39,11 @@ public class CardService {
 
     // Get or create user (JIT provisioning)
     User user = userProvisioningService.getOrCreateUser(authentication);
-    log.info("User found: {} (ID: {})", user.getEmail(), user.getId());
+    log.info("User found (ID: {})", user.getId());
 
     // Fetch cards
     List<Card> cards = cardRepository.findByUserId(user.getId());
-    log.info("Retrieved {} cards for user: {}", cards.size(), user.getEmail());
+    log.info("Retrieved {} cards for user ID: {}", cards.size(), user.getId());
 
     return cardMapper.toDtoList(cards);
   }

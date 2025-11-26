@@ -1,5 +1,6 @@
 package at.holly.easybankbackend.dto;
 
+import at.holly.easybankbackend.enums.CardType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ public class CardDto {
     private Long cardId;
     private Long userId;
     private String cardNumber;
-    private String cardType;
+    private CardType cardType;
     private Integer totalLimit;
     private Integer amountUsed;
     private Integer availableAmount;

@@ -1,17 +1,23 @@
 package at.holly.easybankbackend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import at.holly.easybankbackend.enums.LoanType;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.sql.Date;
 
 @Entity
-@Getter @Setter
-@Table(name = "loans")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Table(
+    name = "loans",
+    indexes = {
+        @Index(name = "idx_loan_user_id", columnList = "user_id")
+    }
+)
 public class Loan {
 
   @Id
@@ -24,8 +30,9 @@ public class Loan {
   @Column(name = "start_dt")
   private Date startDt;
 
+  @Enumerated(EnumType.STRING)
   @Column(name = "loan_type")
-  private String loanType;
+  private LoanType loanType;
 
   @Column(name = "total_loan")
   private int totalLoan;

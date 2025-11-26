@@ -1,9 +1,7 @@
 package at.holly.easybankbackend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import at.holly.easybankbackend.enums.AccountType;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Date;
@@ -14,7 +12,12 @@ import java.sql.Date;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "accounts")
+@Table(
+    name = "accounts",
+    indexes = {
+        @Index(name = "idx_account_user_id", columnList = "user_id")
+    }
+)
 public class Account {
 
   @Column(name = "user_id")
@@ -24,8 +27,9 @@ public class Account {
   @Column(name="account_number")
   private long accountNumber;
 
+  @Enumerated(EnumType.STRING)
   @Column(name="account_type")
-  private String accountType;
+  private AccountType accountType;
 
   @Column(name = "branch_address")
   private String branchAddress;

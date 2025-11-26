@@ -4,6 +4,7 @@ import at.holly.easybankbackend.model.User;
 import at.holly.easybankbackend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
@@ -30,20 +31,33 @@ public class UserProvisioningService {
   /**
    * Get or create a user from JWT authentication.
    * If the user doesn't exist in the database, create them automatically.
+   * Thread-safe to handle concurrent first-time logins from the same user.
    *
    * @param authentication Spring Security Authentication object containing JWT
    * @return User entity (existing or newly created)
    */
   @Transactional
-  public User getOrCreateUser(Authentication authentication) {
+  public synchronized User getOrCreateUser(Authentication authentication) {
     String email = jwtService.extractEmail(authentication);
 
-    log.debug("Looking up user with email: {}", email);
+    log.debug("Looking up user by JWT");
 
+    // First attempt: try to find existing user
     return userRepository.findByEmail(email)
       .orElseGet(() -> {
-        log.info("User not found with email: {}. Creating new user from JWT claims.", email);
-        return createUserFromJwt(authentication);
+        try {
+          // User not found, try to create new user
+          log.info("User not found. Creating new user from JWT claims.");
+          return createUserFromJwt(authentication);
+        } catch (DataIntegrityViolationException e) {
+          // Race condition: another thread created the user between our check and insert
+          // This can happen with concurrent requests from the same new user
+          log.warn("Concurrent user creation detected. Retrying lookup.");
+
+          // Retry the lookup - the user should exist now
+          return userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User creation failed after race condition retry"));
+        }
       });
   }
 
@@ -76,7 +90,7 @@ public class UserProvisioningService {
     // Can be collected later via profile update or custom Keycloak attributes
 
     User savedUser = userRepository.save(user);
-    log.info("Successfully created new user: {} (ID: {})", email, savedUser.getId());
+    log.info("Successfully created new user (ID: {})", savedUser.getId());
 
     return savedUser;
   }

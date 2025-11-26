@@ -1,5 +1,6 @@
 package at.holly.easybankbackend.dto;
 
+import at.holly.easybankbackend.enums.TransactionType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +27,7 @@ public class AccountTransactionDto {
     private Date transactionDt;
 
     private String transactionSummary;
-    private String transactionType;
+    private TransactionType transactionType;
     private Integer transactionAmt;
     private Integer closingBalance;
 

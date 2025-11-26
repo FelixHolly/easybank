@@ -1,6 +1,7 @@
 package at.holly.easybankbackend.service;
 
 import at.holly.easybankbackend.dto.AccountDto;
+import at.holly.easybankbackend.enums.AccountType;
 import at.holly.easybankbackend.mapper.AccountMapper;
 import at.holly.easybankbackend.model.Account;
 import at.holly.easybankbackend.model.User;
@@ -52,14 +53,14 @@ class AccountServiceTest {
     Account account = new Account();
     account.setAccountNumber(123456789L);
     account.setUserId(1L);
-    account.setAccountType("Savings");
+    account.setAccountType(AccountType.SAVINGS);
     account.setBranchAddress("Main Branch");
     account.setCreateDt(new Date(System.currentTimeMillis()));
 
     AccountDto accountDto = AccountDto.builder()
         .accountNumber(123456789L)
         .userId(1L)
-        .accountType("Savings")
+        .accountType(AccountType.SAVINGS)
         .branchAddress("Main Branch")
         .build();
 
@@ -74,7 +75,7 @@ class AccountServiceTest {
     assertThat(result).isNotNull();
     assertThat(result.getAccountNumber()).isEqualTo(123456789L);
     assertThat(result.getUserId()).isEqualTo(1L);
-    assertThat(result.getAccountType()).isEqualTo("Savings");
+    assertThat(result.getAccountType()).isEqualTo(AccountType.SAVINGS);
 
     verify(userProvisioningService).getOrCreateUser(authentication);
     verify(accountRepository).findByUserId(1L);

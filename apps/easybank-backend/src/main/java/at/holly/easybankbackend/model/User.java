@@ -11,7 +11,12 @@ import java.sql.Date;
  * Represents an authenticated user in the system.
  */
 @Entity
-@Table(name = "users")
+@Table(
+    name = "users",
+    indexes = {
+        @Index(name = "idx_user_email", columnList = "email", unique = true)
+    }
+)
 @Getter
 @Setter
 @Builder
@@ -26,6 +31,7 @@ public class User {
 
   private String name;
 
+  @Column(unique = true)
   private String email;
 
   @Column(name = "create_dt")

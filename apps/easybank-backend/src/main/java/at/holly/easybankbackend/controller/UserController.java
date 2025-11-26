@@ -35,7 +35,7 @@ public class UserController {
     // Get or create user (JIT provisioning)
     User user = userProvisioningService.getOrCreateUser(authentication);
 
-    log.info("User details retrieved: {} (ID: {})", user.getEmail(), user.getId());
+    log.info("User details retrieved (ID: {})", user.getId());
     return userMapper.toDto(user);
   }
 }
