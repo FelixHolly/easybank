@@ -1,7 +1,7 @@
 package at.holly.easybankbackend.controller;
 
 import at.holly.easybankbackend.dto.UserDto;
-import at.holly.easybankbackend.dto.UserMapper;
+import at.holly.easybankbackend.mapper.UserMapper;
 import at.holly.easybankbackend.model.User;
 import at.holly.easybankbackend.service.UserProvisioningService;
 import lombok.RequiredArgsConstructor;

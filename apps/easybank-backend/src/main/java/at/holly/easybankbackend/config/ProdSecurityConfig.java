@@ -1,6 +1,6 @@
 package at.holly.easybankbackend.config;
 
-import at.holly.easybankbackend.exceptionhandling.CustomBasicAuthenticationEntryPoint;
+import at.holly.easybankbackend.exception.CustomBasicAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;

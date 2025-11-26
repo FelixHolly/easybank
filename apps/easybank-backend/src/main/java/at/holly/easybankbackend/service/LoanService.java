@@ -1,7 +1,7 @@
 package at.holly.easybankbackend.service;
 
 import at.holly.easybankbackend.dto.LoanDto;
-import at.holly.easybankbackend.dto.LoanMapper;
+import at.holly.easybankbackend.mapper.LoanMapper;
 import at.holly.easybankbackend.model.Loan;
 import at.holly.easybankbackend.model.User;
 import at.holly.easybankbackend.repository.LoanRepository;

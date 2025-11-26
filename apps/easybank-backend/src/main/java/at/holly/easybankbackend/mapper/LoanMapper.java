@@ -1,4 +1,6 @@
-package at.holly.easybankbackend.dto;
+package at.holly.easybankbackend.mapper;
+
+import at.holly.easybankbackend.dto.*;
 
 import at.holly.easybankbackend.model.Loan;
 import org.springframework.stereotype.Component;

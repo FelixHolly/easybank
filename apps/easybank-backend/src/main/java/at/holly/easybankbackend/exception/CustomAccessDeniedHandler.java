@@ -1,4 +1,4 @@
-package at.holly.easybankbackend.exceptionhandling;
+package at.holly.easybankbackend.exception;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +9,10 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import java.io.IOException;
 import java.util.Date;
 
+/**
+ * Custom Access Denied Handler
+ * Handles authorization failures (403 Forbidden)
+ */
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
   @Override
   public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {

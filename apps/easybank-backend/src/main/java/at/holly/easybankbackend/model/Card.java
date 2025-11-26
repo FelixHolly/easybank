@@ -1,13 +1,16 @@
 package at.holly.easybankbackend.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Date;
 
 @Entity
-@Getter @Setter
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "cards")
 public class Card {
 

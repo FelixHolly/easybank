@@ -1,7 +1,7 @@
 package at.holly.easybankbackend.config;
 
-import at.holly.easybankbackend.exceptionhandling.CustomAccessDeniedHandler;
-import at.holly.easybankbackend.exceptionhandling.CustomBasicAuthenticationEntryPoint;
+import at.holly.easybankbackend.exception.CustomAccessDeniedHandler;
+import at.holly.easybankbackend.exception.CustomBasicAuthenticationEntryPoint;
 import at.holly.easybankbackend.filter.CsrfCookieFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

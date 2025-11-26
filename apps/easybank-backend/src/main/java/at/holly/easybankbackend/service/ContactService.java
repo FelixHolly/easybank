@@ -1,7 +1,7 @@
 package at.holly.easybankbackend.service;
 
 import at.holly.easybankbackend.dto.ContactDto;
-import at.holly.easybankbackend.dto.ContactMapper;
+import at.holly.easybankbackend.mapper.ContactMapper;
 import at.holly.easybankbackend.model.Contact;
 import at.holly.easybankbackend.repository.ContactRepository;
 import lombok.RequiredArgsConstructor;

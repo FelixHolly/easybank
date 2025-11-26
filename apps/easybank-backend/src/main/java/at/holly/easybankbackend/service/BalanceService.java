@@ -1,7 +1,7 @@
 package at.holly.easybankbackend.service;
 
 import at.holly.easybankbackend.dto.AccountTransactionDto;
-import at.holly.easybankbackend.dto.AccountTransactionMapper;
+import at.holly.easybankbackend.mapper.AccountTransactionMapper;
 import at.holly.easybankbackend.model.AccountTransaction;
 import at.holly.easybankbackend.model.User;
 import at.holly.easybankbackend.repository.AccountTransactionRepository;

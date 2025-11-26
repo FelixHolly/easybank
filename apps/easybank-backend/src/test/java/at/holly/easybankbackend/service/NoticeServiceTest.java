@@ -1,7 +1,7 @@
 package at.holly.easybankbackend.service;
 
 import at.holly.easybankbackend.dto.NoticeDto;
-import at.holly.easybankbackend.dto.NoticeMapper;
+import at.holly.easybankbackend.mapper.NoticeMapper;
 import at.holly.easybankbackend.model.Notice;
 import at.holly.easybankbackend.repository.NoticeRepository;
 import org.junit.jupiter.api.DisplayName;
