@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Delegates business logic to BalanceService
  */
 @RestController
+@RequestMapping("/api/v1")
 @RequiredArgsConstructor
 public class BalanceController {
 

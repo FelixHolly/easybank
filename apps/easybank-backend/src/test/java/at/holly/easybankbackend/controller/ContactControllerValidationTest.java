@@ -11,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -41,8 +40,7 @@ class ContactControllerValidationTest {
         .message("I need help with my account settings and password reset")
         .build();
 
-    mockMvc.perform(post("/contact")
-            .with(csrf())
+    mockMvc.perform(post("/api/v1/contact")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(validContact)))
         .andExpect(status().isOk())
@@ -61,8 +59,7 @@ class ContactControllerValidationTest {
         .message("I need help with my account")
         .build();
 
-    mockMvc.perform(post("/contact")
-            .with(csrf())
+    mockMvc.perform(post("/api/v1/contact")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidContact)))
         .andExpect(status().isBadRequest())
@@ -85,8 +82,7 @@ class ContactControllerValidationTest {
         .message("I need help with my account")
         .build();
 
-    mockMvc.perform(post("/contact")
-            .with(csrf())
+    mockMvc.perform(post("/api/v1/contact")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidContact)))
         .andExpect(status().isBadRequest())
@@ -106,8 +102,7 @@ class ContactControllerValidationTest {
         .message("I need help with my account")
         .build();
 
-    mockMvc.perform(post("/contact")
-            .with(csrf())
+    mockMvc.perform(post("/api/v1/contact")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidContact)))
         .andExpect(status().isBadRequest())
@@ -125,8 +120,7 @@ class ContactControllerValidationTest {
         .message("Too short")
         .build();
 
-    mockMvc.perform(post("/contact")
-            .with(csrf())
+    mockMvc.perform(post("/api/v1/contact")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidContact)))
         .andExpect(status().isBadRequest())
@@ -144,8 +138,7 @@ class ContactControllerValidationTest {
         .message("Short")
         .build();
 
-    mockMvc.perform(post("/contact")
-            .with(csrf())
+    mockMvc.perform(post("/api/v1/contact")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidContact)))
         .andExpect(status().isBadRequest())
@@ -165,13 +158,12 @@ class ContactControllerValidationTest {
         .message("I need help with my account")
         .build();
 
-    mockMvc.perform(post("/contact")
-            .with(csrf())
+    mockMvc.perform(post("/api/v1/contact")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidContact)))
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.timestamp").exists())
-        .andExpect(jsonPath("$.path").value("/contact"));
+        .andExpect(jsonPath("$.path").value("/api/v1/contact"));
   }
 
   @Test
@@ -185,8 +177,7 @@ class ContactControllerValidationTest {
         .message("I need help with my account settings")
         .build();
 
-    mockMvc.perform(post("/contact")
-            .with(csrf())
+    mockMvc.perform(post("/api/v1/contact")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidContact)))
         .andExpect(status().isBadRequest())
@@ -204,8 +195,7 @@ class ContactControllerValidationTest {
         .message(longMessage)
         .build();
 
-    mockMvc.perform(post("/contact")
-            .with(csrf())
+    mockMvc.perform(post("/api/v1/contact")
             .contentType(MediaType.APPLICATION_JSON)
             .content(objectMapper.writeValueAsString(invalidContact)))
         .andExpect(status().isBadRequest())

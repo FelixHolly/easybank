@@ -2,19 +2,16 @@ package at.holly.easybankbackend.config;
 
 import at.holly.easybankbackend.exception.CustomAccessDeniedHandler;
 import at.holly.easybankbackend.exception.CustomBasicAuthenticationEntryPoint;
-import at.holly.easybankbackend.filter.CsrfCookieFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 
 @Profile("!prod")
 @Configuration
@@ -29,17 +26,14 @@ public class SecurityConfig {
     jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeyCloakRoleConverter());
 
     http
-      .csrf(csrf -> csrf
-        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-        .csrfTokenRequestHandler(new CsrfTokenRequestAttributeHandler())
-        .ignoringRequestMatchers("/contact", "/register")
-      )
-      .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+      .csrf(AbstractHttpConfigurer::disable)
       .sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
       .authorizeHttpRequests(
         (requests) -> requests
-          .requestMatchers("/myAccount", "/myLoans", "/myCards", "/myBalance", "/user", "/logout").hasRole("USER")
-          .requestMatchers("/register", "/contact", "/notices", "/error").permitAll()
+          .requestMatchers("/api/v1/myAccount", "/api/v1/myLoans", "/api/v1/myCards", "/api/v1/myBalance", "/api/v1/user", "/api/v1/logout").hasRole("USER")
+          .requestMatchers("/api/v1/register", "/api/v1/contact", "/api/v1/notices", "/error").permitAll()
+          .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+          .requestMatchers("/actuator/**").permitAll()
       )
       //global error config
       .exceptionHandling(

@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Date;
 import java.time.LocalDate;
 
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -23,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /**
  * Integration tests for UserController.
- * Tests the /user endpoint with mock JWT authentication.
+ * Tests the /api/v1/user endpoint with mock JWT authentication.
  */
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -48,7 +47,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET /user - Should return existing user details")
+    @DisplayName("GET /api/v1/user - Should return existing user details")
     void shouldReturnExistingUserDetails() throws Exception {
         // Given - Create user in database
         User user = new User();
@@ -58,8 +57,7 @@ class UserControllerTest {
         userRepository.save(user);
 
         // When & Then
-        mockMvc.perform(get("/user")
-                        .with(csrf())
+        mockMvc.perform(get("/api/v1/user")
                         .with(jwt()
                                 .jwt(jwt -> jwt.claim("email", TEST_EMAIL))
                                 .authorities(() -> "ROLE_USER")
@@ -72,7 +70,7 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET /user - Should create new user via JIT provisioning")
+    @DisplayName("GET /api/v1/user - Should create new user via JIT provisioning")
     void shouldCreateNewUserViaJitProvisioning() throws Exception {
         // Given - No user in database
         String newUserEmail = "new.user@example.com";
@@ -80,8 +78,7 @@ class UserControllerTest {
         String familyName = "User";
 
         // When & Then
-        mockMvc.perform(get("/user")
-                        .with(csrf())
+        mockMvc.perform(get("/api/v1/user")
                         .with(jwt()
                                 .jwt(jwt -> {
                                     jwt.claim("email", newUserEmail);
@@ -102,24 +99,22 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET /user - Should return 401 when not authenticated")
+    @DisplayName("GET /api/v1/user - Should return 401 when not authenticated")
     void shouldReturn401WhenNotAuthenticated() throws Exception {
         // When & Then
-        mockMvc.perform(get("/user")
-                        .with(csrf()))
+        mockMvc.perform(get("/api/v1/user"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("GET /user - Should handle user with only first name")
+    @DisplayName("GET /api/v1/user - Should handle user with only first name")
     void shouldHandleUserWithOnlyFirstName() throws Exception {
         // Given
         String email = "firstname.only@example.com";
         String givenName = "FirstName";
 
         // When & Then
-        mockMvc.perform(get("/user")
-                        .with(csrf())
+        mockMvc.perform(get("/api/v1/user")
                         .with(jwt()
                                 .jwt(jwt -> {
                                     jwt.claim("email", email);
@@ -133,15 +128,14 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET /user - Should fallback to username when no name claims")
+    @DisplayName("GET /api/v1/user - Should fallback to username when no name claims")
     void shouldFallbackToUsernameWhenNoNameClaims() throws Exception {
         // Given
         String email = "username.fallback@example.com";
         String username = "cooluser123";
 
         // When & Then
-        mockMvc.perform(get("/user")
-                        .with(csrf())
+        mockMvc.perform(get("/api/v1/user")
                         .with(jwt()
                                 .jwt(jwt -> {
                                     jwt.claim("email", email);
@@ -155,14 +149,13 @@ class UserControllerTest {
     }
 
     @Test
-    @DisplayName("GET /user - Should use email prefix when all name claims are missing")
+    @DisplayName("GET /api/v1/user - Should use email prefix when all name claims are missing")
     void shouldUseEmailPrefixWhenAllNameClaimsMissing() throws Exception {
         // Given
         String email = "emailprefix@example.com";
 
         // When & Then
-        mockMvc.perform(get("/user")
-                        .with(csrf())
+        mockMvc.perform(get("/api/v1/user")
                         .with(jwt()
                                 .jwt(jwt -> jwt.claim("email", email))
                                 .authorities(() -> "ROLE_USER")

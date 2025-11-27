@@ -19,7 +19,6 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -73,11 +72,10 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("GET /myAccount - Should return user's account")
+    @DisplayName("GET /api/v1/myAccount - Should return user's account")
     void shouldReturnUserAccount() throws Exception {
         // When & Then
-        mockMvc.perform(get("/myAccount")
-                        .with(csrf())
+        mockMvc.perform(get("/api/v1/myAccount")
                         .with(jwt()
                                 .jwt(jwt -> jwt.claim("email", TEST_EMAIL))
                                 .authorities(() -> "ROLE_USER")
@@ -90,20 +88,18 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("GET /myAccount - Should return 401 when not authenticated")
+    @DisplayName("GET /api/v1/myAccount - Should return 401 when not authenticated")
     void shouldReturn401WhenNotAuthenticated() throws Exception {
         // When & Then
-        mockMvc.perform(get("/myAccount")
-                        .with(csrf()))
+        mockMvc.perform(get("/api/v1/myAccount"))
                 .andExpect(status().isUnauthorized());
     }
 
     @Test
-    @DisplayName("GET /myAccount - Should return 403 when user does not have ROLE_USER")
+    @DisplayName("GET /api/v1/myAccount - Should return 403 when user does not have ROLE_USER")
     void shouldReturn403WhenNoRoleUser() throws Exception {
         // When & Then
-        mockMvc.perform(get("/myAccount")
-                        .with(csrf())
+        mockMvc.perform(get("/api/v1/myAccount")
                         .with(jwt()
                                 .jwt(jwt -> jwt.claim("email", TEST_EMAIL))
                                 .authorities(() -> "ROLE_ADMIN") // Wrong role
@@ -112,15 +108,14 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("GET /myAccount - Should create user via JIT when first accessing")
+    @DisplayName("GET /api/v1/myAccount - Should create user via JIT when first accessing")
     void shouldCreateUserViaJitWhenFirstAccessing() throws Exception {
         // Given - New user email (no user exists yet in database)
         String newUserEmail = "new.jit.user@example.com";
 
         // When - User accesses endpoint for the first time
         // JIT provisioning will create the user automatically
-        mockMvc.perform(get("/myAccount")
-                        .with(csrf())
+        mockMvc.perform(get("/api/v1/myAccount")
                         .with(jwt()
                                 .jwt(jwt -> {
                                     jwt.claim("email", newUserEmail);
@@ -141,7 +136,7 @@ class AccountControllerTest {
     }
 
     @Test
-    @DisplayName("GET /myAccount - Should return null when user has no account")
+    @DisplayName("GET /api/v1/myAccount - Should return null when user has no account")
     void shouldReturnNullWhenUserHasNoAccount() throws Exception {
         // Given - User without account
         String emailNoAccount = "no.account@example.com";
@@ -153,8 +148,7 @@ class AccountControllerTest {
         userRepository.save(userNoAccount);
 
         // When & Then
-        mockMvc.perform(get("/myAccount")
-                        .with(csrf())
+        mockMvc.perform(get("/api/v1/myAccount")
                         .with(jwt()
                                 .jwt(jwt -> jwt.claim("email", emailNoAccount))
                                 .authorities(() -> "ROLE_USER")
