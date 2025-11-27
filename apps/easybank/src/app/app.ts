@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {RouterModule} from '@angular/router';
+import {LoggerService} from './core';
 
 @Component({
   imports: [RouterModule],
@@ -9,4 +10,9 @@ import {RouterModule} from '@angular/router';
 })
 export class App {
   protected title = 'easybank';
+  private readonly logger = inject(LoggerService);
+
+  constructor() {
+    this.logger.init('EasyBank', '1.0.0');
+  }
 }

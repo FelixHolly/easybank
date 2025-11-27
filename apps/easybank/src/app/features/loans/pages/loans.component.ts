@@ -1,9 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ApiService } from '../../../core';
-import { AuthService } from '../../auth/services/auth.service';
-import { API_CONFIG } from '../../../config';
-import { Loan } from '../../../shared/models/financial.model';
+import {Component, inject, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ApiService, LoggerService} from '../../../core';
+import {API_CONFIG} from '../../../config';
+import {Loan} from '../../../shared/models/financial.model';
 import {NavComponent} from "../../../shared/components/navigation/nav.component";
 
 /**
@@ -23,7 +22,7 @@ export class LoansComponent implements OnInit {
   errorMessage = signal<string | null>(null);
 
   private apiService = inject(ApiService);
-  private authService = inject(AuthService); // kept for future if needed
+  private logger = inject(LoggerService);
 
   ngOnInit(): void {
     this.loadLoans();
@@ -42,7 +41,7 @@ export class LoansComponent implements OnInit {
       error: (error) => {
         this.errorMessage.set('Failed to load loans. Please try again.');
         this.isLoading.set(false);
-        console.error('Error loading loans:', error);
+        this.logger.error('Error loading loans:', error);
       },
     });
   }

@@ -1,9 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ApiService } from '../../../core';
-import { AuthService } from '../../auth/services/auth.service';
-import { API_CONFIG } from '../../../config';
-import { Card } from '../../../shared/models/financial.model';
+import {Component, inject, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ApiService, LoggerService} from '../../../core';
+import {API_CONFIG} from '../../../config';
+import {Card} from '../../../shared/models/financial.model';
 import {NavComponent} from "../../../shared/components/navigation/nav.component";
 
 /**
@@ -23,7 +22,7 @@ export class CardsComponent implements OnInit {
   errorMessage = signal<string | null>(null);
 
   private apiService = inject(ApiService);
-  private authService = inject(AuthService); // kept for future behavior if needed
+  private logger = inject(LoggerService);
 
   ngOnInit(): void {
     this.loadCards();
@@ -42,7 +41,7 @@ export class CardsComponent implements OnInit {
       error: (error) => {
         this.errorMessage.set('Failed to load cards. Please try again.');
         this.isLoading.set(false);
-        console.error('Error loading cards:', error);
+        this.logger.error('Error loading cards:', error);
       },
     });
   }

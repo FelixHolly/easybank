@@ -4,43 +4,40 @@ import {provideHttpClient, withInterceptors} from '@angular/common/http';
 import {appRoutes} from './app.routes';
 import {errorInterceptor} from './core';
 import {
-  provideKeycloak,
-  includeBearerTokenInterceptor,
+  createInterceptorCondition,
   INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
-  createInterceptorCondition
+  includeBearerTokenInterceptor,
+  provideKeycloak
 } from "keycloak-angular";
+import {environment} from '../environments/environment';
 
 // Configure which URLs should receive the Bearer token
-const localhostCondition = createInterceptorCondition({
-  urlPattern: /^(http:\/\/localhost:8080)(\/.*)?$/i,
-  bearerPrefix: 'Bearer'
-});
+// Dynamically create pattern based on environment API URL
+const apiUrlPattern = new RegExp(`^(${environment.api.baseUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})(/.*)?$`, 'i');
 
-console.log('Initializing EasyBank Application...');
-console.log('Keycloak Config:', {
-  url: 'http://localhost:8180/',
-  realm: 'EasyBankDev',
-  clientId: 'EasyBankPublicClient'
+const apiCondition = createInterceptorCondition({
+  urlPattern: apiUrlPattern,
+  bearerPrefix: 'Bearer'
 });
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideKeycloak({
       config: {
-        url: 'http://localhost:8180/',
-        realm: 'EasyBankDev',
-        clientId: 'EasyBankPublicClient'
+        url: environment.keycloak.url,
+        realm: environment.keycloak.realm,
+        clientId: environment.keycloak.clientId
       },
       initOptions: {
         pkceMethod: 'S256',
         onLoad: 'check-sso',
-        redirectUri: 'http://localhost:4200/dashboard',
+        redirectUri: environment.keycloak.redirectUri,
         //silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
       },
       providers: [
         {
           provide: INCLUDE_BEARER_TOKEN_INTERCEPTOR_CONFIG,
-          useValue: [localhostCondition]
+          useValue: [apiCondition]
         }
       ]
     }),

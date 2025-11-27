@@ -1,10 +1,11 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ApiService, User } from '../../../core';
-import { AuthService } from '../../auth/services/auth.service';
-import { API_CONFIG } from '../../../config';
-import { Account } from '../../../shared/models/financial.model';
+import {Component, inject, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ApiService, User} from '../../../core';
+import {AuthService} from '../../auth/services/auth.service';
+import {API_CONFIG} from '../../../config';
+import {Account} from '../../../shared/models/financial.model';
 import {NavComponent} from "../../../shared/components/navigation/nav.component";
+import {LoggerService} from '../../../core';
 
 /**
  * Account Component
@@ -25,6 +26,7 @@ export class AccountComponent implements OnInit {
 
   private apiService = inject(ApiService);
   private authService = inject(AuthService);
+  private logger = inject(LoggerService);
 
   ngOnInit(): void {
     this.currentUser.set(this.authService.getCurrentUser());
@@ -44,7 +46,7 @@ export class AccountComponent implements OnInit {
       error: (error) => {
         this.errorMessage.set('Failed to load account details. Please try again.');
         this.isLoading.set(false);
-        console.error('Error loading account:', error);
+        this.logger.error('Error loading account:', error);
       },
     });
   }

@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ApiService } from '../../../core';
 import { API_CONFIG } from '../../../config';
 import { ContactRequestDto, ContactResponseDto } from '../models/contact.model';
+import { LoggerService } from '../../../core';
 
 /**
  * Contact Component
@@ -19,6 +20,7 @@ import { ContactRequestDto, ContactResponseDto } from '../models/contact.model';
 export class ContactComponent {
   private fb = inject(FormBuilder);
   private apiService = inject(ApiService);
+  private logger = inject(LoggerService);
 
   contactForm: FormGroup = this.fb.group({
     contactName: ['', [Validators.required]],
@@ -55,7 +57,7 @@ export class ContactComponent {
         error: (error) => {
           this.isLoading.set(false);
           this.errorMessage.set('Failed to submit your message. Please try again later.');
-          console.error('Error submitting contact form:', error);
+          this.logger.error('Error submitting contact form:', error);
         },
       });
   }

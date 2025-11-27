@@ -1,13 +1,16 @@
+import { environment } from '../../environments/environment';
+
 /**
  * API Configuration
  * Central configuration for all API endpoints and settings
+ * Now uses environment-based configuration
  */
 
 export const API_CONFIG = {
-  // Base URL - should come from environment in production
-  baseUrl: 'http://localhost:8080',
+  // Base URL from environment
+  baseUrl: environment.api.baseUrl,
 
-  // API Endpoints
+  // API Endpoints - all now include /api/v1 prefix via baseUrl
   endpoints: {
     // Auth endpoints
     auth: {
@@ -29,14 +32,11 @@ export const API_CONFIG = {
     notices: '/notices',
   },
 
-  // Request timeout in milliseconds
-  timeout: 30000,
+  // Request timeout from environment
+  timeout: environment.api.timeout,
 
-  // Retry configuration
-  retry: {
-    maxAttempts: 3,
-    delay: 1000,
-  },
+  // Retry configuration from environment
+  retry: environment.api.retry,
 } as const;
 
 // Type-safe endpoint keys

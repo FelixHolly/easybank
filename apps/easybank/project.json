@@ -41,7 +41,13 @@
               "maximumError": "8kb"
             }
           ],
-          "outputHashing": "all"
+          "outputHashing": "all",
+          "fileReplacements": [
+            {
+              "replace": "apps/easybank/src/environments/environment.ts",
+              "with": "apps/easybank/src/environments/environment.prod.ts"
+            }
+          ]
         },
         "development": {
           "optimization": false,

@@ -1,9 +1,8 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ApiService } from '../../../core';
-import { AuthService } from '../../auth/services/auth.service';
-import { API_CONFIG } from '../../../config';
-import { AccountTransaction } from '../../../shared/models/financial.model';
+import {Component, inject, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ApiService, LoggerService} from '../../../core';
+import {API_CONFIG} from '../../../config';
+import {AccountTransaction} from '../../../shared/models/financial.model';
 import {NavComponent} from "../../../shared/components/navigation/nav.component";
 
 /**
@@ -24,7 +23,7 @@ export class BalanceComponent implements OnInit {
   errorMessage = signal<string | null>(null);
 
   private apiService = inject(ApiService);
-  private authService = inject(AuthService); // kept for future use if needed
+  private logger = inject(LoggerService);
 
   ngOnInit(): void {
     this.loadTransactions();
@@ -49,7 +48,7 @@ export class BalanceComponent implements OnInit {
         error: (error) => {
           this.errorMessage.set('Failed to load transactions. Please try again.');
           this.isLoading.set(false);
-          console.error('Error loading transactions:', error);
+          this.logger.error('Error loading transactions:', error);
         },
       });
   }

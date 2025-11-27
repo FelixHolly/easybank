@@ -2,6 +2,7 @@ import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
+import { LoggerService } from '../services/logger.service';
 
 /**
  * Error Interceptor
@@ -14,10 +15,11 @@ import { catchError, throwError } from 'rxjs';
  */
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
   const router = inject(Router);
+  const logger = inject(LoggerService);
 
   return next(req).pipe(
     catchError((error: HttpErrorResponse) => {
-      let errorMessage = 'An unknown error occurred';
+      let errorMessage: string;
 
       if (error.error instanceof ErrorEvent) {
         // Client-side error
@@ -30,24 +32,25 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         switch (error.status) {
           case 401:
             // Unauthorized - redirect to login
+            logger.warn('Unauthorized access - redirecting to home');
             router.navigate(['/home']);
             break;
           case 403:
             // Forbidden
-            console.error('Access denied');
+            logger.error('Access denied');
             break;
           case 404:
             // Not found
-            console.error('Resource not found');
+            logger.error('Resource not found');
             break;
           case 500:
             // Server error
-            console.error('Server error occurred');
+            logger.error('Server error occurred');
             break;
         }
       }
 
-      console.error('HTTP Error:', errorMessage);
+      logger.error('HTTP Error:', errorMessage);
 
       // TODO: Show error notification to user
       // this.notificationService.showError(errorMessage);
