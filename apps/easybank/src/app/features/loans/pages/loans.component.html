@@ -173,6 +173,23 @@
                 </article>
               }
             </div>
+
+            <!-- Pagination -->
+            @if (isPaginationNeeded()) {
+              <app-pagination
+                [currentPage]="currentPage()"
+                [totalPages]="totalPages()"
+                [pageNumbers]="pageNumbers()"
+                [hasPreviousPage]="hasPreviousPage()"
+                [hasNextPage]="hasNextPage()"
+                [pageRange]="pageRange()"
+                [pageSize]="pageSize()"
+                (pageChange)="loansStore.goToPage($event)"
+                (previousPage)="loansStore.previousPage()"
+                (nextPage)="loansStore.nextPage()"
+                (pageSizeChange)="loansStore.changePageSize($event)"
+              />
+            }
           </section>
         </div>
       }

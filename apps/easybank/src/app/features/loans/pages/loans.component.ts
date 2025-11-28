@@ -1,24 +1,25 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavComponent } from '../../../shared/components/navigation/nav.component';
+import { PaginationComponent } from '../../../shared/components/pagination/pagination.component';
 import { LoansStore, LoanWithMetrics } from '../store/loans.store';
 
 /**
  * Loans Component
  * Manage and view loan information
- * Now using NgRx SignalStore for state management
+ * Now using NgRx SignalStore with pagination support
  */
 @Component({
   selector: 'app-loans',
   standalone: true,
-  imports: [CommonModule, NavComponent],
+  imports: [CommonModule, NavComponent, PaginationComponent],
   templateUrl: './loans.component.html',
   styleUrl: './loans.component.scss',
 })
 export class LoansComponent implements OnInit {
-  private loansStore = inject(LoansStore);
+  readonly loansStore = inject(LoansStore);
 
-  // Expose store signals
+  // Expose store signals - data
   readonly loans = this.loansStore.loansWithMetrics;
   readonly loading = this.loansStore.loading;
   readonly error = this.loansStore.error;
@@ -28,6 +29,16 @@ export class LoansComponent implements OnInit {
   readonly activeLoans = this.loansStore.activeLoans;
   readonly completedLoans = this.loansStore.completedLoans;
   readonly hasLoans = this.loansStore.hasLoans;
+
+  // Expose store signals - pagination
+  readonly currentPage = this.loansStore.currentPage;
+  readonly totalPages = this.loansStore.totalPages;
+  readonly pageNumbers = this.loansStore.pageNumbers;
+  readonly hasPreviousPage = this.loansStore.hasPreviousPage;
+  readonly hasNextPage = this.loansStore.hasNextPage;
+  readonly pageRange = this.loansStore.pageRange;
+  readonly pageSize = this.loansStore.pageSize;
+  readonly isPaginationNeeded = this.loansStore.isPaginationNeeded;
 
   ngOnInit(): void {
     this.loansStore.loadLoans();

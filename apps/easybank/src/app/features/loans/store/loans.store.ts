@@ -1,11 +1,12 @@
 import { computed, inject } from '@angular/core';
+import { HttpParams } from '@angular/common/http';
 import { patchState, signalStore, withComputed, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, map } from 'rxjs';
-import { ApiService, LoggerService } from '../../../core';
+import { pipe, switchMap, tap } from 'rxjs';
+import { ApiService, LoggerService, withPagination } from '../../../core';
 import { API_CONFIG } from '../../../config';
 import { Loan } from '../../../shared/models/financial.model';
-import { Page, extractPageContent } from '../../../shared/models/page.model';
+import { Page } from '../../../shared/models/page.model';
 import { withUiState } from '../../../core';
 
 /**
@@ -73,6 +74,9 @@ export const LoansStore = signalStore(
 
   // UI state management
   withUiState<Loan[]>(),
+
+  // Pagination management
+  withPagination(),
 
   // Computed values
   withComputed(({ data }) => ({
@@ -200,30 +204,59 @@ export const LoansStore = signalStore(
 
     return {
       /**
-       * Load loans from API
-       * Automatically manages loading, error, and success states
+       * Load loans from API with pagination
+       * Automatically manages loading, error, success, and pagination states
+       *
+       * @param page Optional page number (defaults to current page)
        */
-      loadLoans: rxMethod<void>(
+      loadLoans: rxMethod<number | void>(
         pipe(
-          tap(() => {
-            logger.info('Loading loans');
+          tap((page) => {
+            const pageNum = page ?? store.currentPage();
+            logger.info(`Loading loans (page ${pageNum})`);
             patchState(store, {
               loading: true,
               error: null,
               success: false,
             });
           }),
-          switchMap(() =>
-            apiService.get<Page<Loan>>(API_CONFIG.endpoints.loans).pipe(
-              map(extractPageContent),
+          switchMap((page) => {
+            const pageNum = page ?? store.currentPage();
+            const paginationParams = store.buildPaginationParams(
+              pageNum,
+              store.pageSize(),
+              'loanNumber,asc'
+            );
+
+            // Build HttpParams from pagination parameters
+            let httpParams = new HttpParams()
+              .set('page', paginationParams.page.toString())
+              .set('size', paginationParams.size.toString());
+
+            if (paginationParams.sort) {
+              httpParams = httpParams.set('sort', paginationParams.sort);
+            }
+
+            return apiService.get<Page<Loan>>(
+              API_CONFIG.endpoints.loans,
+              httpParams
+            ).pipe(
               tap({
-                next: (loans) => {
-                  logger.success(`Loaded ${loans.length} loans`);
+                next: (pageResponse) => {
+                  logger.success(`Loaded ${pageResponse.content.length} loans (page ${pageResponse.number + 1}/${pageResponse.totalPages})`);
                   patchState(store, {
-                    data: loans,
+                    // Data state
+                    data: pageResponse.content,
                     loading: false,
                     success: true,
                     error: null,
+                    // Pagination state
+                    currentPage: pageResponse.number,
+                    pageSize: pageResponse.size,
+                    totalElements: pageResponse.totalElements,
+                    totalPages: pageResponse.totalPages,
+                    isFirst: pageResponse.first,
+                    isLast: pageResponse.last,
                   });
                 },
                 error: (error) => {
@@ -236,10 +269,45 @@ export const LoansStore = signalStore(
                   });
                 },
               })
-            )
-          )
+            );
+          })
         )
       ),
+
+      /**
+       * Go to next page
+       */
+      nextPage() {
+        if (store.hasNextPage()) {
+          this.loadLoans(store.currentPage() + 1);
+        }
+      },
+
+      /**
+       * Go to previous page
+       */
+      previousPage() {
+        if (store.hasPreviousPage()) {
+          this.loadLoans(store.currentPage() - 1);
+        }
+      },
+
+      /**
+       * Go to specific page
+       */
+      goToPage(page: number) {
+        if (page >= 0 && page < store.totalPages()) {
+          this.loadLoans(page);
+        }
+      },
+
+      /**
+       * Change page size and reload
+       */
+      changePageSize(size: number) {
+        patchState(store, { pageSize: size, currentPage: 0 });
+        this.loadLoans(0);
+      },
 
       /**
        * Retry loading loans
