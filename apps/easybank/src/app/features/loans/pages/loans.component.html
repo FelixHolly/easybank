@@ -16,7 +16,7 @@
   <!-- Body -->
   <section class="eb-loans-body">
     <!-- Loading -->
-    @if (isLoading()) {
+    @if (loading()) {
       <div class="eb-loans-skeleton">
         <div class="eb-skeleton-card eb-skeleton-card--summary">
           <div class="eb-skeleton-line eb-skeleton-line--title"></div>
@@ -36,12 +36,12 @@
       </div>
     } @else {
       <!-- Error -->
-      @if (errorMessage()) {
+      @if (error()) {
         <div class="eb-alert eb-alert--error">
           <div class="eb-alert__icon">⚠️</div>
           <div class="eb-alert__content">
             <h2>We couldn’t load your loans</h2>
-            <p>{{ errorMessage() }}</p>
+            <p>{{ error() }}</p>
           </div>
           <button type="button" class="btn btn--ghost" (click)="retry()">
             Try again
@@ -50,7 +50,7 @@
       }
 
       <!-- Empty state -->
-      @if (!errorMessage() && loans().length === 0) {
+      @if (!error() && loans().length === 0) {
         <div class="eb-empty-state">
           <div class="eb-empty-state__icon">📄</div>
           <h2>You have no loans at this time</h2>
@@ -62,7 +62,7 @@
       }
 
       <!-- Loans content -->
-      @if (!errorMessage() && loans().length > 0) {
+      @if (!error() && loans().length > 0) {
         <div class="eb-loans-layout">
           <!-- Summary panel -->
           <aside class="eb-loans-summary">
@@ -78,7 +78,7 @@
             <div class="eb-loans-summary__metric">
               <span class="label">Total outstanding</span>
               <span class="value value--outstanding">
-                {{ totalOutstandingAmount() | currency : 'USD' : 'symbol' : '1.0-0' }}
+                {{ totalOutstanding() | currency : 'USD' : 'symbol' : '1.0-0' }}
               </span>
             </div>
 
