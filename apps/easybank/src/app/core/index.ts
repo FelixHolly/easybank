@@ -7,6 +7,9 @@
 export * from './services/api.service';
 export * from './services/logger.service';
 
+// Stores
+export * from './store/ui-state.store';
+
 // Guards
 export * from './guards/auth.guard';
 
