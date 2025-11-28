@@ -17,7 +17,7 @@
   <!-- Body -->
   <section class="eb-cards-body">
     <!-- Loading -->
-    @if (isLoading()) {
+    @if (loading()) {
       <div class="eb-cards-skeleton">
         <div class="eb-skeleton-card eb-skeleton-card--summary">
           <div class="eb-skeleton-line eb-skeleton-line--title"></div>
@@ -37,12 +37,12 @@
       </div>
     } @else {
       <!-- Error -->
-      @if (errorMessage()) {
+      @if (error()) {
         <div class="eb-alert eb-alert--error">
           <div class="eb-alert__icon">⚠️</div>
           <div class="eb-alert__content">
             <h2>We couldn’t load your cards</h2>
-            <p>{{ errorMessage() }}</p>
+            <p>{{ error() }}</p>
           </div>
           <button type="button" class="btn btn--ghost" (click)="retry()">
             Try again
@@ -51,7 +51,7 @@
       }
 
       <!-- Empty state -->
-      @if (!errorMessage() && cards().length === 0) {
+      @if (!error() && cards().length === 0) {
         <div class="eb-empty-state">
           <div class="eb-empty-state__icon">💳</div>
           <h2>You don’t have any cards yet</h2>
@@ -62,7 +62,7 @@
       }
 
       <!-- Cards content -->
-      @if (!errorMessage() && cards().length > 0) {
+      @if (!error() && cards().length > 0) {
         <div class="eb-cards-layout">
           <!-- Summary -->
           <aside class="eb-cards-summary">

@@ -1,13 +1,12 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {ApiService, LoggerService} from '../../../core';
-import {API_CONFIG} from '../../../config';
-import {Card} from '../../../shared/models/financial.model';
-import {NavComponent} from "../../../shared/components/navigation/nav.component";
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NavComponent } from '../../../shared/components/navigation/nav.component';
+import { CardsStore, CardWithMetrics } from '../store/cards.store';
 
 /**
  * Cards Component
  * Manage credit/debit cards
+ * Now using NgRx SignalStore for state management
  */
 @Component({
   selector: 'app-cards',
@@ -17,70 +16,40 @@ import {NavComponent} from "../../../shared/components/navigation/nav.component"
   styleUrl: './cards.component.scss',
 })
 export class CardsComponent implements OnInit {
-  cards = signal<Card[]>([]);
-  isLoading = signal(false);
-  errorMessage = signal<string | null>(null);
+  private cardsStore = inject(CardsStore);
 
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
+  // Expose store signals
+  readonly cards = this.cardsStore.cardsWithMetrics;
+  readonly loading = this.cardsStore.loading;
+  readonly error = this.cardsStore.error;
+  readonly totalCreditLimit = this.cardsStore.totalCreditLimit;
+  readonly totalAvailable = this.cardsStore.totalAvailable;
+  readonly totalUsed = this.cardsStore.totalUsed;
+  readonly overallUtilization = this.cardsStore.overallUtilization;
+  readonly hasCards = this.cardsStore.hasCards;
 
   ngOnInit(): void {
-    this.loadCards();
-  }
-
-  private loadCards(): void {
-    this.isLoading.set(true);
-    this.errorMessage.set(null);
-
-    // Backend extracts identity from JWT; no email required
-    this.apiService.get<Card[]>(API_CONFIG.endpoints.cards).subscribe({
-      next: (cards) => {
-        this.cards.set(cards);
-        this.isLoading.set(false);
-      },
-      error: (error) => {
-        this.errorMessage.set('Failed to load cards. Please try again.');
-        this.isLoading.set(false);
-        this.logger.error('Error loading cards:', error);
-      },
-    });
+    this.cardsStore.loadCards();
   }
 
   retry(): void {
-    this.loadCards();
+    this.cardsStore.retry();
   }
 
-  maskedCardNumber(card: Card): string {
-    const num = String(card.cardNumber ?? '');
-    if (!num || num.length < 4) {
-      return '•••• •••• •••• ••••';
-    }
-    const last4 = num.slice(-4);
-    return `•••• •••• •••• ${last4}`;
+  // Helper methods for template (data is already computed in store)
+  maskedCardNumber(card: CardWithMetrics): string {
+    return card.maskedNumber;
   }
 
-  utilizationPercent(card: Card): number {
-    if (!card.totalLimit || card.totalLimit <= 0) return 0;
-    return Math.min(
-      100,
-      Math.max(0, (card.amountUsed / card.totalLimit) * 100)
-    );
+  utilizationPercent(card: CardWithMetrics): number {
+    return card.utilizationPercent;
   }
 
-  isHighUtilization(card: Card): boolean {
-    return this.utilizationPercent(card) >= 80;
+  isHighUtilization(card: CardWithMetrics): boolean {
+    return card.isHighUtilization;
   }
 
-  isLowUtilization(card: Card): boolean {
-    const p = this.utilizationPercent(card);
-    return p > 0 && p < 30;
-  }
-
-  totalCreditLimit(): number {
-    return this.cards().reduce((sum, c) => sum + (c.totalLimit || 0), 0);
-  }
-
-  totalAvailable(): number {
-    return this.cards().reduce((sum, c) => sum + (c.availableAmount || 0), 0);
+  isLowUtilization(card: CardWithMetrics): boolean {
+    return card.isLowUtilization;
   }
 }
