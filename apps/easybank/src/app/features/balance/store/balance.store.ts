@@ -1,11 +1,12 @@
 import { computed, inject } from '@angular/core';
+import { HttpParams } from '@angular/common/http';
 import { patchState, signalStore, withComputed, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, map } from 'rxjs';
-import { ApiService, LoggerService } from '../../../core';
+import { pipe, switchMap, tap } from 'rxjs';
+import { ApiService, LoggerService, withPagination } from '../../../core';
 import { API_CONFIG } from '../../../config';
 import { AccountTransaction } from '../../../shared/models/financial.model';
-import { Page, extractPageContent } from '../../../shared/models/page.model';
+import { Page } from '../../../shared/models/page.model';
 import { withUiState } from '../../../core';
 
 /**
@@ -37,6 +38,9 @@ export const BalanceStore = signalStore(
 
   // UI state management
   withUiState<AccountTransaction[]>(),
+
+  // Pagination management
+  withPagination(),
 
   // Computed values
   withComputed(({ data }) => ({
@@ -103,30 +107,59 @@ export const BalanceStore = signalStore(
 
     return {
       /**
-       * Load transactions from API
-       * Automatically manages loading, error, and success states
+       * Load transactions from API with pagination
+       * Automatically manages loading, error, success, and pagination states
+       *
+       * @param page Optional page number (defaults to current page)
        */
-      loadTransactions: rxMethod<void>(
+      loadTransactions: rxMethod<number | void>(
         pipe(
-          tap(() => {
-            logger.info('Loading transactions');
+          tap((page) => {
+            const pageNum = page ?? store.currentPage();
+            logger.info(`Loading transactions (page ${pageNum})`);
             patchState(store, {
               loading: true,
               error: null,
               success: false,
             });
           }),
-          switchMap(() =>
-            apiService.get<Page<AccountTransaction>>(API_CONFIG.endpoints.balance).pipe(
-              map(extractPageContent),
+          switchMap((page) => {
+            const pageNum = page ?? store.currentPage();
+            const paginationParams = store.buildPaginationParams(
+              pageNum,
+              store.pageSize(),
+              'transactionDt,desc'
+            );
+
+            // Build HttpParams from pagination parameters
+            let httpParams = new HttpParams()
+              .set('page', paginationParams.page.toString())
+              .set('size', paginationParams.size.toString());
+
+            if (paginationParams.sort) {
+              httpParams = httpParams.set('sort', paginationParams.sort);
+            }
+
+            return apiService.get<Page<AccountTransaction>>(
+              API_CONFIG.endpoints.balance,
+              httpParams
+            ).pipe(
               tap({
-                next: (transactions) => {
-                  logger.success(`Loaded ${transactions.length} transactions`);
+                next: (pageResponse) => {
+                  logger.success(`Loaded ${pageResponse.content.length} transactions (page ${pageResponse.number + 1}/${pageResponse.totalPages})`);
                   patchState(store, {
-                    data: transactions,
+                    // Data state
+                    data: pageResponse.content,
                     loading: false,
                     success: true,
                     error: null,
+                    // Pagination state
+                    currentPage: pageResponse.number,
+                    pageSize: pageResponse.size,
+                    totalElements: pageResponse.totalElements,
+                    totalPages: pageResponse.totalPages,
+                    isFirst: pageResponse.first,
+                    isLast: pageResponse.last,
                   });
                 },
                 error: (error) => {
@@ -139,10 +172,45 @@ export const BalanceStore = signalStore(
                   });
                 },
               })
-            )
-          )
+            );
+          })
         )
       ),
+
+      /**
+       * Go to next page
+       */
+      nextPage() {
+        if (store.hasNextPage()) {
+          this.loadTransactions(store.currentPage() + 1);
+        }
+      },
+
+      /**
+       * Go to previous page
+       */
+      previousPage() {
+        if (store.hasPreviousPage()) {
+          this.loadTransactions(store.currentPage() - 1);
+        }
+      },
+
+      /**
+       * Go to specific page
+       */
+      goToPage(page: number) {
+        if (page >= 0 && page < store.totalPages()) {
+          this.loadTransactions(page);
+        }
+      },
+
+      /**
+       * Change page size and reload
+       */
+      changePageSize(size: number) {
+        patchState(store, { pageSize: size, currentPage: 0 });
+        this.loadTransactions(0);
+      },
 
       /**
        * Retry loading transactions

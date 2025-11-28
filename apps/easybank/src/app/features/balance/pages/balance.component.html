@@ -126,6 +126,23 @@
                 </article>
               }
             </div>
+
+            <!-- Pagination -->
+            @if (isPaginationNeeded()) {
+              <app-pagination
+                [currentPage]="currentPage()"
+                [totalPages]="totalPages()"
+                [pageNumbers]="pageNumbers()"
+                [hasPreviousPage]="hasPreviousPage()"
+                [hasNextPage]="hasNextPage()"
+                [pageRange]="pageRange()"
+                [pageSize]="pageSize()"
+                (pageChange)="balanceStore.goToPage($event)"
+                (previousPage)="balanceStore.previousPage()"
+                (nextPage)="balanceStore.nextPage()"
+                (pageSizeChange)="balanceStore.changePageSize($event)"
+              />
+            }
           </section>
         </div>
       }

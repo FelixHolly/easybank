@@ -9,6 +9,7 @@ export * from './services/logger.service';
 
 // Stores
 export * from './store/ui-state.store';
+export * from './store/with-pagination';
 
 // Guards
 export * from './guards/auth.guard';

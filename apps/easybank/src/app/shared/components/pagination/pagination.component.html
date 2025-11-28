@@ -1,0 +1,65 @@
+<div class="pagination-container">
+  <!-- Page info -->
+  <div class="pagination-info">
+    <span class="page-range">{{ pageRange() }}</span>
+  </div>
+
+  <!-- Pagination controls -->
+  <nav class="pagination-controls" aria-label="Pagination">
+    <!-- Previous button -->
+    <button
+      class="pagination-button"
+      [disabled]="!hasPreviousPage()"
+      (click)="onPreviousPage()"
+      aria-label="Previous page"
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <!-- Page numbers -->
+    <div class="page-numbers">
+      @for (pageNum of pageNumbers(); track pageNum) {
+        <button
+          class="pagination-button"
+          [class.active]="pageNum === currentPage()"
+          (click)="onPageChange(pageNum)"
+          [attr.aria-label]="'Go to page ' + (pageNum + 1)"
+          [attr.aria-current]="pageNum === currentPage() ? 'page' : null"
+        >
+          {{ pageNum + 1 }}
+        </button>
+      }
+    </div>
+
+    <!-- Next button -->
+    <button
+      class="pagination-button"
+      [disabled]="!hasNextPage()"
+      (click)="onNextPage()"
+      aria-label="Next page"
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+        <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </nav>
+
+  <!-- Page size selector -->
+  @if (showPageSizeSelector()) {
+    <div class="page-size-selector">
+      <label for="page-size">Items per page:</label>
+      <select
+        id="page-size"
+        [value]="pageSize()"
+        (change)="onPageSizeChange($event)"
+        class="page-size-select"
+      >
+        @for (size of pageSizes; track size) {
+          <option [value]="size" [selected]="size === pageSize()">{{ size }}</option>
+        }
+      </select>
+    </div>
+  }
+</div>
