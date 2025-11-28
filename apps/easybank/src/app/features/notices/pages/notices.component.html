@@ -15,7 +15,7 @@
 
   <section class="eb-notices-content">
     <!-- Loading state -->
-    <ng-container *ngIf="service.loading$()">
+    <ng-container *ngIf="loading()">
       <div class="eb-notices-skeleton">
         <div class="eb-skeleton-card" *ngFor="let _ of [1, 2, 3]">
           <div class="eb-skeleton-line eb-skeleton-line--title"></div>
@@ -27,24 +27,24 @@
     </ng-container>
 
     <!-- Error state -->
-    <div *ngIf="!service.loading$() && service.error$()" class="eb-alert eb-alert--error">
+    <div *ngIf="!loading() && error()" class="eb-alert eb-alert--error">
       <div class="eb-alert__icon">⚠️</div>
       <div class="eb-alert__content">
         <h2>We couldn’t load the latest notices</h2>
-        <p>{{ service.error$() }}</p>
+        <p>{{ error() }}</p>
       </div>
-      <button type="button" class="btn btn--ghost" (click)="service.loadNotices()">
+      <button type="button" class="btn btn--ghost" (click)="retry()">
         Try again
       </button>
     </div>
 
     <!-- Notices list + empty state -->
-    <ng-container *ngIf="!service.loading$() && !service.error$()">
+    <ng-container *ngIf="!loading() && !error()">
       <!-- List of notices -->
-      <div *ngIf="service.notices$().length > 0; else noNotices" class="eb-notices-list">
+      <div *ngIf="notices().length > 0; else noNotices" class="eb-notices-list">
         <article
           class="eb-notice-card"
-          *ngFor="let notice of service.notices$()"
+          *ngFor="let notice of notices()"
           [ngClass]="'eb-notice-card--' + getStatus(notice)"
         >
           <header class="eb-notice-card__header">

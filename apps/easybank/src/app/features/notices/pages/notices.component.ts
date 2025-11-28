@@ -1,7 +1,13 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { NoticesService } from '../services/notices.service';
+import {Component, inject, OnInit} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {NoticesStore, NoticeStatus} from '../store/notices.store';
+import {Notice} from '../model/Notice';
 
+/**
+ * Notices Component
+ * View bank notices and announcements
+ * Now using NgRx SignalStore for state management
+ */
 @Component({
   selector: 'app-notices',
   standalone: true,
@@ -10,33 +16,37 @@ import { NoticesService } from '../services/notices.service';
   styleUrl: './notices.component.scss',
 })
 export class NoticesComponent implements OnInit {
-  service = inject(NoticesService);
+  private noticesStore = inject(NoticesStore);
+
+  // Expose store signals
+  readonly notices = this.noticesStore.noticesWithStatus;
+  readonly activeNotices = this.noticesStore.activeNotices;
+  readonly upcomingNotices = this.noticesStore.upcomingNotices;
+  readonly expiredNotices = this.noticesStore.expiredNotices;
+  readonly loading = this.noticesStore.loading;
+  readonly error = this.noticesStore.error;
+  readonly hasActiveNotices = this.noticesStore.hasActiveNotices;
+  readonly hasNotices = this.noticesStore.hasNotices;
 
   ngOnInit(): void {
-    this.service.loadNotices();
+    this.noticesStore.loadNotices();
+  }
+
+  retry(): void {
+    this.noticesStore.retry();
   }
 
   /**
-   * Derive a simple status for the notice based on dates.
+   * Get status for a notice (data is already computed in store)
    */
-  getStatus(notice: any): 'active' | 'upcoming' | 'expired' {
-    const now = new Date();
-    const start = new Date(notice.noticBegDt);
-    const end = new Date(notice.noticEndDt);
-
-    if (now < start) return 'upcoming';
-    if (now > end) return 'expired';
-    return 'active';
+  getStatus(notice: Notice): NoticeStatus {
+    return this.noticesStore.getStatus(notice);
   }
 
-  getStatusLabel(status: 'active' | 'upcoming' | 'expired'): string {
-    switch (status) {
-      case 'active':
-        return 'Active notice';
-      case 'upcoming':
-        return 'Scheduled';
-      case 'expired':
-        return 'Past notice';
-    }
+  /**
+   * Get status label
+   */
+  getStatusLabel(status: NoticeStatus): string {
+    return this.noticesStore.getStatusLabel(status);
   }
 }
