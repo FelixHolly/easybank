@@ -172,6 +172,23 @@
                 </article>
               }
             </div>
+
+            <!-- Pagination -->
+            @if (isPaginationNeeded()) {
+              <app-pagination
+                [currentPage]="currentPage()"
+                [totalPages]="totalPages()"
+                [pageNumbers]="pageNumbers()"
+                [hasPreviousPage]="hasPreviousPage()"
+                [hasNextPage]="hasNextPage()"
+                [pageRange]="pageRange()"
+                [pageSize]="pageSize()"
+                (pageChange)="cardsStore.goToPage($event)"
+                (previousPage)="cardsStore.previousPage()"
+                (nextPage)="cardsStore.nextPage()"
+                (pageSizeChange)="cardsStore.changePageSize($event)"
+              />
+            }
           </section>
         </div>
       }

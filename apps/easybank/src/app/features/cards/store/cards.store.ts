@@ -1,11 +1,12 @@
 import { computed, inject } from '@angular/core';
+import { HttpParams } from '@angular/common/http';
 import { patchState, signalStore, withComputed, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap, map } from 'rxjs';
-import { ApiService, LoggerService } from '../../../core';
+import { pipe, switchMap, tap } from 'rxjs';
+import { ApiService, LoggerService, withPagination } from '../../../core';
 import { API_CONFIG } from '../../../config';
 import { Card } from '../../../shared/models/financial.model';
-import { Page, extractPageContent } from '../../../shared/models/page.model';
+import { Page } from '../../../shared/models/page.model';
 import { withUiState } from '../../../core';
 
 /**
@@ -66,6 +67,9 @@ export const CardsStore = signalStore(
 
   // UI state management
   withUiState<Card[]>(),
+
+  // Pagination management
+  withPagination(),
 
   // Computed values
   withComputed(({ data }) => ({
@@ -148,30 +152,59 @@ export const CardsStore = signalStore(
 
     return {
       /**
-       * Load cards from API
-       * Automatically manages loading, error, and success states
+       * Load cards from API with pagination
+       * Automatically manages loading, error, success, and pagination states
+       *
+       * @param page Optional page number (defaults to current page)
        */
-      loadCards: rxMethod<void>(
+      loadCards: rxMethod<number | void>(
         pipe(
-          tap(() => {
-            logger.info('Loading cards');
+          tap((page) => {
+            const pageNum = page ?? store.currentPage();
+            logger.info(`Loading cards (page ${pageNum})`);
             patchState(store, {
               loading: true,
               error: null,
               success: false,
             });
           }),
-          switchMap(() =>
-            apiService.get<Page<Card>>(API_CONFIG.endpoints.cards).pipe(
-              map(extractPageContent),
+          switchMap((page) => {
+            const pageNum = page ?? store.currentPage();
+            const paginationParams = store.buildPaginationParams(
+              pageNum,
+              store.pageSize(),
+              'cardId,asc'
+            );
+
+            // Build HttpParams from pagination parameters
+            let httpParams = new HttpParams()
+              .set('page', paginationParams.page.toString())
+              .set('size', paginationParams.size.toString());
+
+            if (paginationParams.sort) {
+              httpParams = httpParams.set('sort', paginationParams.sort);
+            }
+
+            return apiService.get<Page<Card>>(
+              API_CONFIG.endpoints.cards,
+              httpParams
+            ).pipe(
               tap({
-                next: (cards) => {
-                  logger.success(`Loaded ${cards.length} cards`);
+                next: (pageResponse) => {
+                  logger.success(`Loaded ${pageResponse.content.length} cards (page ${pageResponse.number + 1}/${pageResponse.totalPages})`);
                   patchState(store, {
-                    data: cards,
+                    // Data state
+                    data: pageResponse.content,
                     loading: false,
                     success: true,
                     error: null,
+                    // Pagination state
+                    currentPage: pageResponse.number,
+                    pageSize: pageResponse.size,
+                    totalElements: pageResponse.totalElements,
+                    totalPages: pageResponse.totalPages,
+                    isFirst: pageResponse.first,
+                    isLast: pageResponse.last,
                   });
                 },
                 error: (error) => {
@@ -184,10 +217,45 @@ export const CardsStore = signalStore(
                   });
                 },
               })
-            )
-          )
+            );
+          })
         )
       ),
+
+      /**
+       * Go to next page
+       */
+      nextPage() {
+        if (store.hasNextPage()) {
+          this.loadCards(store.currentPage() + 1);
+        }
+      },
+
+      /**
+       * Go to previous page
+       */
+      previousPage() {
+        if (store.hasPreviousPage()) {
+          this.loadCards(store.currentPage() - 1);
+        }
+      },
+
+      /**
+       * Go to specific page
+       */
+      goToPage(page: number) {
+        if (page >= 0 && page < store.totalPages()) {
+          this.loadCards(page);
+        }
+      },
+
+      /**
+       * Change page size and reload
+       */
+      changePageSize(size: number) {
+        patchState(store, { pageSize: size, currentPage: 0 });
+        this.loadCards(0);
+      },
 
       /**
        * Retry loading cards
