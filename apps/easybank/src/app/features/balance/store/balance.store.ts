@@ -1,10 +1,11 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap } from 'rxjs';
+import { pipe, switchMap, tap, map } from 'rxjs';
 import { ApiService, LoggerService } from '../../../core';
 import { API_CONFIG } from '../../../config';
 import { AccountTransaction } from '../../../shared/models/financial.model';
+import { Page, extractPageContent } from '../../../shared/models/page.model';
 import { withUiState } from '../../../core';
 
 /**
@@ -116,7 +117,8 @@ export const BalanceStore = signalStore(
             });
           }),
           switchMap(() =>
-            apiService.get<AccountTransaction[]>(API_CONFIG.endpoints.balance).pipe(
+            apiService.get<Page<AccountTransaction>>(API_CONFIG.endpoints.balance).pipe(
+              map(extractPageContent),
               tap({
                 next: (transactions) => {
                   logger.success(`Loaded ${transactions.length} transactions`);

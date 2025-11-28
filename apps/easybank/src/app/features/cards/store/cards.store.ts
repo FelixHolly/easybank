@@ -1,10 +1,11 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap } from 'rxjs';
+import { pipe, switchMap, tap, map } from 'rxjs';
 import { ApiService, LoggerService } from '../../../core';
 import { API_CONFIG } from '../../../config';
 import { Card } from '../../../shared/models/financial.model';
+import { Page, extractPageContent } from '../../../shared/models/page.model';
 import { withUiState } from '../../../core';
 
 /**
@@ -161,7 +162,8 @@ export const CardsStore = signalStore(
             });
           }),
           switchMap(() =>
-            apiService.get<Card[]>(API_CONFIG.endpoints.cards).pipe(
+            apiService.get<Page<Card>>(API_CONFIG.endpoints.cards).pipe(
+              map(extractPageContent),
               tap({
                 next: (cards) => {
                   logger.success(`Loaded ${cards.length} cards`);

@@ -1,10 +1,11 @@
 import { computed, inject } from '@angular/core';
 import { patchState, signalStore, withComputed, withMethods } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
-import { pipe, switchMap, tap } from 'rxjs';
+import { pipe, switchMap, tap, map } from 'rxjs';
 import { ApiService, LoggerService } from '../../../core';
 import { API_CONFIG } from '../../../config';
 import { Notice } from '../model/Notice';
+import { Page, extractPageContent } from '../../../shared/models/page.model';
 import { withUiState } from '../../../core';
 
 /**
@@ -198,7 +199,8 @@ export const NoticesStore = signalStore(
             });
           }),
           switchMap(() =>
-            apiService.get<Notice[]>(API_CONFIG.endpoints.notices).pipe(
+            apiService.get<Page<Notice>>(API_CONFIG.endpoints.notices).pipe(
+              map(extractPageContent),
               tap({
                 next: (notices) => {
                   logger.success(`Loaded ${notices.length} notices`);
