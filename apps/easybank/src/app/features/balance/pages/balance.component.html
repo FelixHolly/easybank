@@ -18,7 +18,7 @@
   <!-- Body -->
   <section class="eb-balance-body">
     <!-- Loading -->
-    @if (isLoading()) {
+    @if (loading()) {
       <div class="eb-balance-skeleton">
         <div class="eb-skeleton-card eb-skeleton-card--summary">
           <div class="eb-skeleton-line eb-skeleton-line--title"></div>
@@ -37,12 +37,12 @@
       </div>
     } @else {
       <!-- Error state -->
-      @if (errorMessage()) {
+      @if (error()) {
         <div class="eb-alert eb-alert--error">
           <div class="eb-alert__icon">⚠️</div>
           <div class="eb-alert__content">
-            <h2>We couldn’t load your transactions</h2>
-            <p>{{ errorMessage() }}</p>
+            <h2>We couldn't load your transactions</h2>
+            <p>{{ error() }}</p>
           </div>
           <button type="button" class="btn btn--ghost" (click)="retry()">
             Try again
@@ -51,7 +51,7 @@
       }
 
       <!-- Empty state -->
-      @if (!errorMessage() && transactions().length === 0) {
+      @if (!error() && transactions().length === 0) {
         <div class="eb-empty-state">
           <div class="eb-empty-state__icon">📭</div>
           <h2>No transactions yet</h2>
@@ -62,7 +62,7 @@
       }
 
       <!-- Content -->
-      @if (!errorMessage() && transactions().length > 0) {
+      @if (!error() && transactions().length > 0) {
         <div class="eb-balance-grid">
           <!-- Summary card -->
           <article class="eb-balance-card">

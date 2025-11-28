@@ -1,13 +1,13 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {ApiService, LoggerService} from '../../../core';
-import {API_CONFIG} from '../../../config';
-import {AccountTransaction} from '../../../shared/models/financial.model';
-import {NavComponent} from "../../../shared/components/navigation/nav.component";
+import { Component, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { NavComponent } from '../../../shared/components/navigation/nav.component';
+import { BalanceStore } from '../store/balance.store';
+import { AccountTransaction } from '../../../shared/models/financial.model';
 
 /**
  * Balance Component
  * View account balance and transaction history
+ * Now using NgRx SignalStore for state management
  */
 @Component({
   selector: 'app-balance',
@@ -17,51 +17,30 @@ import {NavComponent} from "../../../shared/components/navigation/nav.component"
   styleUrl: './balance.component.scss',
 })
 export class BalanceComponent implements OnInit {
-  transactions = signal<AccountTransaction[]>([]);
-  currentBalance = signal(0);
-  isLoading = signal(false);
-  errorMessage = signal<string | null>(null);
+  private balanceStore = inject(BalanceStore);
 
-  private apiService = inject(ApiService);
-  private logger = inject(LoggerService);
+  // Expose store signals
+  readonly transactions = this.balanceStore.sortedTransactions;
+  readonly currentBalance = this.balanceStore.currentBalance;
+  readonly totalCredits = this.balanceStore.totalCredits;
+  readonly totalDebits = this.balanceStore.totalDebits;
+  readonly loading = this.balanceStore.loading;
+  readonly error = this.balanceStore.error;
+  readonly hasTransactions = this.balanceStore.hasTransactions;
 
   ngOnInit(): void {
-    this.loadTransactions();
-  }
-
-  private loadTransactions(): void {
-    this.isLoading.set(true);
-    this.errorMessage.set(null);
-
-    // Backend extracts identity from JWT; no email needed here
-    this.apiService
-      .get<AccountTransaction[]>(API_CONFIG.endpoints.balance)
-      .subscribe({
-        next: (transactions) => {
-          this.transactions.set(transactions);
-          if (transactions.length > 0) {
-            // Assuming first is most recent
-            this.currentBalance.set(transactions[0].closingBalance);
-          }
-          this.isLoading.set(false);
-        },
-        error: (error) => {
-          this.errorMessage.set('Failed to load transactions. Please try again.');
-          this.isLoading.set(false);
-          this.logger.error('Error loading transactions:', error);
-        },
-      });
+    this.balanceStore.loadTransactions();
   }
 
   retry(): void {
-    this.loadTransactions();
+    this.balanceStore.retry();
   }
 
   isCredit(tx: AccountTransaction): boolean {
-    return tx.transactionType === 'Credit';
+    return this.balanceStore.isCredit(tx);
   }
 
   isDebit(tx: AccountTransaction): boolean {
-    return tx.transactionType === 'Debit';
+    return this.balanceStore.isDebit(tx);
   }
 }
