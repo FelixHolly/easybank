@@ -32,7 +32,7 @@ export const appConfig: ApplicationConfig = {
         pkceMethod: 'S256',
         onLoad: 'check-sso',
         redirectUri: environment.keycloak.redirectUri,
-        //silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
+        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html'
       },
       providers: [
         {
