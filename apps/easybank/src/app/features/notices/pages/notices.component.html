@@ -76,6 +76,23 @@
         </article>
       </div>
 
+      <!-- Pagination -->
+      @if (isPaginationNeeded()) {
+        <app-pagination
+          [currentPage]="currentPage()"
+          [totalPages]="totalPages()"
+          [pageNumbers]="pageNumbers()"
+          [hasPreviousPage]="hasPreviousPage()"
+          [hasNextPage]="hasNextPage()"
+          [pageRange]="pageRange()"
+          [pageSize]="pageSize()"
+          (pageChange)="noticesStore.goToPage($event)"
+          (previousPage)="noticesStore.previousPage()"
+          (nextPage)="noticesStore.nextPage()"
+          (pageSizeChange)="noticesStore.changePageSize($event)"
+        />
+      }
+
       <!-- No notices -->
       <ng-template #noNotices>
         <div class="eb-empty-state">
