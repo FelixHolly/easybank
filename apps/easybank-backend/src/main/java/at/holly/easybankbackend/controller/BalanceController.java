@@ -1,9 +1,10 @@
 package at.holly.easybankbackend.controller;
 
 import at.holly.easybankbackend.dto.AccountTransactionDto;
+import at.holly.easybankbackend.dto.BalanceSummary;
+import at.holly.easybankbackend.dto.PageResponse;
 import at.holly.easybankbackend.service.BalanceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -25,18 +26,21 @@ public class BalanceController {
   private final BalanceService balanceService;
 
   /**
-   * Get transaction history for authenticated user (paginated)
+   * Get transaction history for authenticated user (paginated) with balance summary
    * Supports query parameters: ?page=0&size=10&sort=transactionDt,desc
+   * Returns PageResponse with:
+   * - page: Spring Data Page with transaction content and pagination metadata
+   * - metadata: BalanceSummary with current balance, total credits/debits (computed from ALL transactions)
    *
    * @param authentication the authentication object containing JWT token
    * @param pageable pagination and sorting parameters (default: page 0, size 20, sorted by transactionDt desc)
-   * @return page of account transaction DTOs
+   * @return page response with transaction DTOs and balance summary
    */
   @GetMapping("/myBalance")
-  public Page<AccountTransactionDto> getBalanceDetails(
+  public PageResponse<AccountTransactionDto, BalanceSummary> getBalanceDetails(
       Authentication authentication,
       @PageableDefault(size = 20, sort = "transactionDt", direction = Sort.Direction.DESC) Pageable pageable) {
-    return balanceService.getTransactionsForUser(authentication, pageable);
+    return balanceService.getTransactionsWithSummary(authentication, pageable);
   }
 
 }

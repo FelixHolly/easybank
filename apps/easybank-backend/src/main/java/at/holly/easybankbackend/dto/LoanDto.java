@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 /**
@@ -26,9 +27,9 @@ public class LoanDto {
     private Date startDt;
 
     private LoanType loanType;
-    private Integer totalLoan;
-    private Integer amountPaid;
-    private Integer outstandingAmount;
+    private BigDecimal totalLoan;
+    private BigDecimal amountPaid;
+    private BigDecimal outstandingAmount;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createDt;

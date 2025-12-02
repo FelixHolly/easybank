@@ -4,6 +4,7 @@ import at.holly.easybankbackend.enums.TransactionType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 @Entity
@@ -41,11 +42,11 @@ public class AccountTransaction {
   @Column(name="transaction_type")
   private TransactionType transactionType;
 
-  @Column(name = "transaction_amt")
-  private int transactionAmt;
+  @Column(name = "transaction_amt", precision = 19, scale = 2)
+  private BigDecimal transactionAmt;
 
-  @Column(name = "closing_balance")
-  private int closingBalance;
+  @Column(name = "closing_balance", precision = 19, scale = 2)
+  private BigDecimal closingBalance;
 
   @Column(name = "create_dt")
   private Date createDt;

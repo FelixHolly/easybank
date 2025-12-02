@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 /**
@@ -23,9 +24,9 @@ public class CardDto {
     private Long userId;
     private String cardNumber;
     private CardType cardType;
-    private Integer totalLimit;
-    private Integer amountUsed;
-    private Integer availableAmount;
+    private BigDecimal totalLimit;
+    private BigDecimal amountUsed;
+    private BigDecimal availableAmount;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createDt;

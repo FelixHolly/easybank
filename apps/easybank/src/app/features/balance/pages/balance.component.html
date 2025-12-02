@@ -51,7 +51,7 @@
       }
 
       <!-- Empty state -->
-      @if (!error() && transactions().length === 0) {
+      @if (!error() && transactions()?.length === 0) {
         <div class="eb-empty-state">
           <div class="eb-empty-state__icon">📭</div>
           <h2>No transactions yet</h2>
@@ -62,7 +62,7 @@
       }
 
       <!-- Content -->
-      @if (!error() && transactions().length > 0) {
+      @if (!error() && (transactions()?.length ?? 0) > 0) {
         <div class="eb-balance-grid">
           <!-- Summary card -->
           <article class="eb-balance-card">

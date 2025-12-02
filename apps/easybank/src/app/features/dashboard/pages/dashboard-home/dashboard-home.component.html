@@ -102,7 +102,7 @@
               </div>
             } @else {
               <div class="eb-tx-list">
-                @for (transaction of recentTransactions(); track transaction.id) {
+                @for (transaction of recentTransactions(); track transaction.transactionId) {
                   <article
                     class="eb-tx-item"
                     [class.eb-tx-item--credit]="isCredit(transaction)"
@@ -111,11 +111,11 @@
                     <div class="eb-tx-main">
                       <div class="eb-tx-summary">
                         <div class="title">
-                          {{ transaction.summary }}
+                          {{ transaction.transactionSummary }}
                         </div>
                         <div class="meta">
-                          {{ transaction.date | date : 'MMM d, y' }}
-                          · ID: {{ transaction.id }}
+                          {{ transaction.transactionDt | date : 'MMM d, y' }}
+                          · ID: {{ transaction.transactionId }}
                         </div>
                       </div>
                     </div>
@@ -126,10 +126,10 @@
                         [class.amount--negative]="isDebit(transaction)"
                       >
                         {{ isCredit(transaction) ? '+' : '-' }}
-                        {{ transaction.amount | currency : 'USD' : 'symbol' : '1.2-2' }}
+                        {{ transaction.transactionAmt | currency : 'USD' : 'symbol' : '1.2-2' }}
                       </div>
                       <div class="type-label">
-                        {{ transaction.type }}
+                        {{ transaction.transactionType }}
                       </div>
                     </div>
                   </article>

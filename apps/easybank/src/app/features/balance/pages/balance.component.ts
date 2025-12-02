@@ -20,14 +20,13 @@ import { AccountTransaction } from '../../../shared/models/financial.model';
 export class BalanceComponent implements OnInit {
   readonly balanceStore = inject(BalanceStore);
 
-  // Expose store signals - data
-  readonly transactions = this.balanceStore.sortedTransactions;
+  // Expose store signals - data (transactions already sorted by backend)
+  readonly transactions = this.balanceStore.data;
   readonly currentBalance = this.balanceStore.currentBalance;
   readonly totalCredits = this.balanceStore.totalCredits;
   readonly totalDebits = this.balanceStore.totalDebits;
   readonly loading = this.balanceStore.loading;
   readonly error = this.balanceStore.error;
-  readonly hasTransactions = this.balanceStore.hasTransactions;
 
   // Expose store signals - pagination
   readonly currentPage = this.balanceStore.currentPage;

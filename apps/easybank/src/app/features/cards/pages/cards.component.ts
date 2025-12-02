@@ -27,7 +27,6 @@ export class CardsComponent implements OnInit {
   readonly totalAvailable = this.cardsStore.totalAvailable;
   readonly totalUsed = this.cardsStore.totalUsed;
   readonly overallUtilization = this.cardsStore.overallUtilization;
-  readonly hasCards = this.cardsStore.hasCards;
 
   // Expose store signals - pagination
   readonly currentPage = this.cardsStore.currentPage;

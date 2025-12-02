@@ -4,6 +4,7 @@ import at.holly.easybankbackend.enums.LoanType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 @Entity
@@ -34,14 +35,14 @@ public class Loan {
   @Column(name = "loan_type")
   private LoanType loanType;
 
-  @Column(name = "total_loan")
-  private int totalLoan;
+  @Column(name = "total_loan", precision = 19, scale = 2)
+  private BigDecimal totalLoan;
 
-  @Column(name = "amount_paid")
-  private int amountPaid;
+  @Column(name = "amount_paid", precision = 19, scale = 2)
+  private BigDecimal amountPaid;
 
-  @Column(name = "outstanding_amount")
-  private int outstandingAmount;
+  @Column(name = "outstanding_amount", precision = 19, scale = 2)
+  private BigDecimal outstandingAmount;
 
   @Column(name = "create_dt")
   private Date createDt;

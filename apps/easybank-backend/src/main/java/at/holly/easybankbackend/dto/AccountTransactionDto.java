@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 /**
@@ -28,8 +29,8 @@ public class AccountTransactionDto {
 
     private String transactionSummary;
     private TransactionType transactionType;
-    private Integer transactionAmt;
-    private Integer closingBalance;
+    private BigDecimal transactionAmt;
+    private BigDecimal closingBalance;
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date createDt;

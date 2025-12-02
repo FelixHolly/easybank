@@ -4,6 +4,7 @@ import at.holly.easybankbackend.enums.CardType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 @Entity
@@ -34,14 +35,14 @@ public class Card {
   @Column(name = "card_type")
   private CardType cardType;
 
-  @Column(name = "total_limit")
-  private int totalLimit;
+  @Column(name = "total_limit", precision = 19, scale = 2)
+  private BigDecimal totalLimit;
 
-  @Column(name = "amount_used")
-  private int amountUsed;
+  @Column(name = "amount_used", precision = 19, scale = 2)
+  private BigDecimal amountUsed;
 
-  @Column(name = "available_amount")
-  private int availableAmount;
+  @Column(name = "available_amount", precision = 19, scale = 2)
+  private BigDecimal availableAmount;
 
   @Column(name = "create_dt")
   private Date createDt;

@@ -26,9 +26,6 @@ export class LoansComponent implements OnInit {
   readonly totalLoanAmount = this.loansStore.totalLoanAmount;
   readonly totalOutstanding = this.loansStore.totalOutstanding;
   readonly totalPaid = this.loansStore.totalPaid;
-  readonly activeLoans = this.loansStore.activeLoans;
-  readonly completedLoans = this.loansStore.completedLoans;
-  readonly hasLoans = this.loansStore.hasLoans;
 
   // Expose store signals - pagination
   readonly currentPage = this.loansStore.currentPage;

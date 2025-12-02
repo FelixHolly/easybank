@@ -1,31 +1,28 @@
-import { computed, inject } from '@angular/core';
+import { inject } from '@angular/core';
 import { HttpParams } from '@angular/common/http';
-import { patchState, signalStore, withComputed, withMethods } from '@ngrx/signals';
+import { patchState, signalStore, withMethods, withState } from '@ngrx/signals';
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { pipe, switchMap, tap } from 'rxjs';
 import { ApiService, LoggerService, withPagination } from '../../../core';
 import { API_CONFIG } from '../../../config';
 import { AccountTransaction } from '../../../shared/models/financial.model';
-import { Page } from '../../../shared/models/page.model';
+import { BalancePageResponse, BalanceSummary } from '../../../shared/models/page-response.model';
 import { withUiState } from '../../../core';
 
 /**
  * Balance Store
- * Manages account balance and transactions using NgRx SignalStore
+ * Manages account balance and transactions using NgRx SignalStore with PageResponse
  *
- * Features:
- * - UI state management (loading, error, success)
- * - Computed values (balance, totals)
- * - Reactive loading with rxMethod
+ * Now fetches summary metadata from backend (accurate values from ALL transactions)
  *
  * @example
  * ```typescript
  * export class BalanceComponent {
- *   private balanceStore = inject(BalanceStore);
+ *   readonly balanceStore = inject(BalanceStore);
  *
- *   readonly transactions = this.balanceStore.sortedTransactions;
+ *   readonly transactions = this.balanceStore.data;
  *   readonly currentBalance = this.balanceStore.currentBalance;
- *   readonly loading = this.balanceStore.loading;
+ *   readonly totalCredits = this.balanceStore.totalCredits;
  *
  *   ngOnInit() {
  *     this.balanceStore.loadTransactions();
@@ -42,63 +39,13 @@ export const BalanceStore = signalStore(
   // Pagination management
   withPagination(),
 
-  // Computed values
-  withComputed(({ data }) => ({
-    /**
-     * Current account balance from most recent transaction
-     */
-    currentBalance: computed(() => {
-      const transactions = data() ?? [];
-      if (transactions.length === 0) return 0;
-
-      // Find most recent transaction
-      const mostRecent = transactions.reduce((latest: AccountTransaction, tx: AccountTransaction) =>
-        new Date(tx.transactionDt) > new Date(latest.transactionDt) ? tx : latest
-      , transactions[0]);
-
-      return mostRecent.closingBalance;
-    }),
-
-    /**
-     * Total credit amount (money received)
-     */
-    totalCredits: computed(() => {
-      const transactions = data() ?? [];
-      return transactions
-        .filter((tx: AccountTransaction) => tx.transactionType === 'Credit')
-        .reduce((sum: number, tx: AccountTransaction) => sum + tx.transactionAmt, 0);
-    }),
-
-    /**
-     * Total debit amount (money spent)
-     */
-    totalDebits: computed(() => {
-      const transactions = data() ?? [];
-      return transactions
-        .filter((tx: AccountTransaction) => tx.transactionType === 'Debit')
-        .reduce((sum: number, tx: AccountTransaction) => sum + tx.transactionAmt, 0);
-    }),
-
-    /**
-     * Transactions sorted by date (newest first)
-     */
-    sortedTransactions: computed(() => {
-      const transactions = data() ?? [];
-      return [...transactions].sort((a, b) =>
-        new Date(b.transactionDt).getTime() - new Date(a.transactionDt).getTime()
-      );
-    }),
-
-    /**
-     * Count of transactions
-     */
-    transactionCount: computed(() => (data() ?? []).length),
-
-    /**
-     * Check if there are any transactions
-     */
-    hasTransactions: computed(() => (data() ?? []).length > 0),
-  })),
+  // Summary metadata state (from backend)
+  withState<BalanceSummary>({
+    currentBalance: 0,
+    totalCredits: 0,
+    totalDebits: 0,
+    transactionCount: 0,
+  }),
 
   // Methods
   withMethods((store) => {
@@ -107,8 +54,8 @@ export const BalanceStore = signalStore(
 
     return {
       /**
-       * Load transactions from API with pagination
-       * Automatically manages loading, error, success, and pagination states
+       * Load transactions from API with pagination and summary metadata
+       * Automatically manages loading, error, success, pagination, and summary states
        *
        * @param page Optional page number (defaults to current page)
        */
@@ -140,26 +87,33 @@ export const BalanceStore = signalStore(
               httpParams = httpParams.set('sort', paginationParams.sort);
             }
 
-            return apiService.get<Page<AccountTransaction>>(
+            return apiService.get<BalancePageResponse>(
               API_CONFIG.endpoints.balance,
               httpParams
             ).pipe(
               tap({
-                next: (pageResponse) => {
-                  logger.success(`Loaded ${pageResponse.content.length} transactions (page ${pageResponse.number + 1}/${pageResponse.totalPages})`);
+                next: (response) => {
+                  logger.success(
+                    `Loaded ${response.page.content.length} transactions (page ${response.page.number + 1}/${response.page.totalPages})`
+                  );
                   patchState(store, {
                     // Data state
-                    data: pageResponse.content,
+                    data: response.page.content,
                     loading: false,
                     success: true,
                     error: null,
                     // Pagination state
-                    currentPage: pageResponse.number,
-                    pageSize: pageResponse.size,
-                    totalElements: pageResponse.totalElements,
-                    totalPages: pageResponse.totalPages,
-                    isFirst: pageResponse.first,
-                    isLast: pageResponse.last,
+                    currentPage: response.page.number,
+                    pageSize: response.page.size,
+                    totalElements: response.page.totalElements,
+                    totalPages: response.page.totalPages,
+                    isFirst: response.page.first,
+                    isLast: response.page.last,
+                    // Summary metadata (accurate values from ALL transactions)
+                    currentBalance: response.metadata.currentBalance,
+                    totalCredits: response.metadata.totalCredits,
+                    totalDebits: response.metadata.totalDebits,
+                    transactionCount: response.metadata.transactionCount,
                   });
                 },
                 error: (error) => {
