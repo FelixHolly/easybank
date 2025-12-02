@@ -91,7 +91,7 @@ All paginated endpoints return a `PageResponse<T, M>` structure that combines:
 ```json
 {
   "page": {
-    "content": [...],
+    "content": ["..."],
     "number": 0,
     "size": 20,
     "totalElements": 100,
